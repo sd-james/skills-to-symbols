@@ -7,6 +7,16 @@ import pickle
 __author__ = 'Steve James'
 
 
+def range_without(start, end, *skips):
+    """
+    Create a range while omitting certain values
+    :param start: the start of the range
+    :param end: the end of the range (excluded)
+    :param skips: the numbers to skip
+    """
+    skip = set(skips)
+    return [x for x in range(start, end) if x not in skip]
+
 def pd2np(data: pd.Series):
     """
     Convert a Pandas series of arrays to a numpy 2D array

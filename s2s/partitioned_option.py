@@ -28,3 +28,6 @@ class PartitionedOption:
     @property
     def states(self):
         return self._states
+
+    def combined_mask(self):
+        pass
