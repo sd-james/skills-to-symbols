@@ -4,6 +4,8 @@ import numpy as np
 
 from s2s.utils import show
 
+__author__ = 'Steve James and George Konidaris'
+
 
 def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=False) -> (pd.DataFrame, pd.DataFrame):
     """

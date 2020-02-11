@@ -8,6 +8,8 @@ from typing import List, Dict
 
 from sklearn.cluster import DBSCAN
 
+__author__ = 'Steve James and George Konidaris'
+
 
 def partition_options(env: gym.Env, transition_data: pd.DataFrame,
                       verbose=False, **kwargs) -> Dict[int, List[PartitionedOption]]:
