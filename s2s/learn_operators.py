@@ -5,6 +5,7 @@ import gym
 import numpy as np
 import pandas as pd
 
+from s2s.abstract_operator import Operator
 from s2s.feature_selection import _compute_precondition_mask
 from s2s.kde import KernelDensityEstimator
 from s2s.partitioned_option import PartitionedOption
@@ -13,6 +14,28 @@ from s2s.svr import SupportVectorRegressor
 from s2s.utils import show, pd2np
 
 __author__ = 'Steve James and George Konidaris'
+
+
+def combine_learned_operators(env: gym.Env, partitioned_options: Dict[int, List[PartitionedOption]],
+                              preconditions: Dict[Tuple[int, int], SupportVectorClassifier],
+                              effects: Dict[
+                                Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]) \
+        -> List[Operator]:
+    """
+    Merge all the learned partitions, preconditions and effects into a data structure
+    :param env: teh domain
+    :param partitioned_options: the partitioned options
+    :param preconditions: the learned preconditions
+    :param effects: the learned effects
+    :return: the combined operators
+    """
+    operators = list()
+    for option in range(env.action_space.n):
+        for partition in partitioned_options[option]:
+            key = (option, partition.partition)
+            operator = Operator(partition, preconditions[key], effects[key])  # bundle them all together
+            operators.append(operator)
+    return operators
 
 
 def learn_effects(env: gym.Env, partitioned_options: Dict[int, List[PartitionedOption]],
