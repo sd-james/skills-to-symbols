@@ -4,9 +4,11 @@ import gym
 import numpy as np
 import pandas as pd
 
-from s2s.kde import KernelDensityEstimator
-from s2s.learn_operators import learn_effects, combine_learned_operators
-from s2s.utils import load, save, pd2np, show
+from s2s.estimators.kde import KernelDensityEstimator
+from s2s.learn_operators import combine_learned_operators, learn_preconditions, learn_effects
+from s2s.partition import partition_options
+from s2s.utils import load, pd2np, show, save
+
 
 def _modifies(symbols, n_variables):
     modifies = []
@@ -53,17 +55,6 @@ def factorise(symbols, n_variables, verbose=True):
             print("F_" + str(i) + "\t\t" + str(factors[i]) + "\t" + str(options[i]))
 
     return factors, options
-
-
-
-def _generate_start_distribution(transition_data: pd.DataFrame, verbose=False, **kwargs):
-    show("Fitting estimator to initial states", verbose)
-    # group by episode and get the first state from each
-    initial_states = pd2np(transition_data.groupby('episode').nth(0)['state'])
-    full_mask = list(range(initial_states.shape[1]))  # all the state variables
-    effect = KernelDensityEstimator(full_mask)
-    effect.fit(initial_states, verbose=verbose, **kwargs)
-    return effect
 
 
 def _extract_factors(mask, factors):
@@ -131,17 +122,16 @@ if __name__ == '__main__':
     initiation_data = pd.read_pickle('data/init.pkl', compression='gzip')
 
     # partitions = partition_options(env, transition_data, verbose=True)
-    #
-    # save(partitions, 'partitioned_options/partitions.pkl')
-    partitions = load('partitioned_options/partitions.pkl')
+    # save(partitions, 'data/partitions.pkl')
+    partitions = load('data/partitions.pkl')
 
     # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True)
-    # save(preconditions, 'preconditions.pkl')
-    preconditions = load('preconditions.pkl')
+    # save(preconditions, 'data/preconditions.pkl')
+    preconditions = load('data/preconditions.pkl')
     #
     # effects = learn_effects(env, partitions, verbose=True)
-    # save(effects, 'effects.pkl')
-    effects = load('effects.pkl')
+    # save(effects, 'data/effects.pkl')
+    effects = load('data/effects.pkl')
 
     operators = combine_learned_operators(env, partitions, preconditions, effects)
 
@@ -150,11 +140,11 @@ if __name__ == '__main__':
 
 
 
-    # initial_states = get_initial_states(task_id, '20191230_raw', pca, 10)
-    #
-    # init_obs = [x[1] for x in initial_states]
-    #
-    # # generate vocabulary
-    # propositions_dir = make_path(task_dir, 'propositions')
-    # (factors, _), (option_symbols, symbol_list) = generate_symbol_vocabulary(env, propositions_dir,
-    #                                                                          operators, n_objects, init_obs)
+    initial_states = get_initial_states(task_id, '20191230_raw', pca, 10)
+
+    init_obs = [x[1] for x in initial_states]
+
+    # generate vocabulary
+    propositions_dir = make_path(task_dir, 'propositions')
+    (factors, _), (option_symbols, symbol_list) = generate_symbol_vocabulary(env, propositions_dir,
+                                                                             operators, n_objects, init_obs)

@@ -5,12 +5,12 @@ import gym
 import numpy as np
 import pandas as pd
 
-from s2s.abstract_operator import Operator
+from s2s.learned_operator import LearnedOperator
+from s2s.estimators.kde import KernelDensityEstimator
+from s2s.estimators.svc import SupportVectorClassifier
+from s2s.estimators.svr import SupportVectorRegressor
 from s2s.feature_selection import _compute_precondition_mask
-from s2s.kde import KernelDensityEstimator
 from s2s.partitioned_option import PartitionedOption
-from s2s.svc import SupportVectorClassifier
-from s2s.svr import SupportVectorRegressor
 from s2s.utils import show, pd2np
 
 __author__ = 'Steve James and George Konidaris'
@@ -20,7 +20,7 @@ def combine_learned_operators(env: gym.Env, partitioned_options: Dict[int, List[
                               preconditions: Dict[Tuple[int, int], SupportVectorClassifier],
                               effects: Dict[
                                 Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]) \
-        -> List[Operator]:
+        -> List[LearnedOperator]:
     """
     Merge all the learned partitions, preconditions and effects into a data structure
     :param env: teh domain
@@ -33,7 +33,7 @@ def combine_learned_operators(env: gym.Env, partitioned_options: Dict[int, List[
     for option in range(env.action_space.n):
         for partition in partitioned_options[option]:
             key = (option, partition.partition)
-            operator = Operator(partition, preconditions[key], effects[key])  # bundle them all together
+            operator = LearnedOperator(partition, preconditions[key], effects[key])  # bundle them all together
             operators.append(operator)
     return operators
 
@@ -96,7 +96,7 @@ def learn_preconditions(env: gym.Env, init_data: pd.DataFrame, partitioned_optio
         # must do equals False because Pandas!
 
         for i, partition in enumerate(partitioned_options[option]):
-            show('Learning precondition for option {}, partition OP'.format(option, partition.partition), verbose)
+            show('Learning precondition for option {}, partition {}'.format(option, partition.partition), verbose)
             if kwargs.get('augment_negative', True):
                 # augment negative samples from the initiation sets of the other partitions
                 negative_samples = _augment_negative(negative_data, partition.partition, partitioned_options[option])
