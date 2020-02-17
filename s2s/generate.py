@@ -329,3 +329,9 @@ def build_forward_model(domain, output_directory, ppddl_symbol_dir, operators, f
         file.write(str(desc))
 
     return desc
+
+
+
+
+
+

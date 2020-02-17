@@ -1,7 +1,9 @@
+import gym
 import numpy as np
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVR
 
+from s2s.estimators.kde import KernelDensityEstimator
 from s2s.utils import show
 
 __author__ = 'Steve James and George Konidaris'
@@ -37,3 +39,20 @@ class SupportVectorRegressor:
         :return: the predicted reward
         """
         return self._svr.predict(state.reshape(1, -1))[0]
+
+    def expected_reward(self, env: gym.Env, state_distribution: KernelDensityEstimator, **kwargs) -> float:
+        """
+        Predict the reward for executing the (implicit) option in the given state distribution
+        :param env: the domain
+        :param state_distribution: the current state distribution
+        :return: the predicted reward
+        """
+
+        n_samples = kwargs.get('n_samples_reward_prediction', 100)
+        states = state_distribution.sample(n_samples)
+
+        # missing vars in mask are simply zeroed out
+        data = np.zeros(shape=(n_samples, env.observation_space.shape[-1]))
+        data[:, state_distribution.mask] = states
+
+        return np.mean(self._svr.predict(data))

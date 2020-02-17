@@ -1,15 +1,30 @@
+from typing import List
+
+from s2s.estimators.svr import SupportVectorRegressor
 from s2s.learned_operator import LearnedOperator
+from s2s.pddl.predicate import Predicate
 
 
 class Operator:
-    def __init__(self, learned_operator: LearnedOperator, name:str=None):
-
+    def __init__(self, learned_operator: LearnedOperator, name: str = None, task: int = None):
+        """
+        Create a new PDDL operator
+        :param learned_operator: the estimated operator
+        :param name: the name of the operator (optional)
+        :param task: the task ID (ignore this if there is only one task)
+        """
         self._option = learned_operator.option
         self._partition = learned_operator.partition
         self._learned_operator = learned_operator
 
-        self.name = name.replace(' ', '-')  if name is not None else 'Option-{}-Partition-{}'.format(self.option, self.partition)
-        self.preconditions = list()
+        if name is not None:
+            self.name = name.replace(' ', '-')
+        else:
+            self.name = 'Option-{}-Partition-{}'.format(self.option, self.partition)
+            if task is not None:
+                self.name = 'Task-{}-{}'.format(task, self.name)
+        self._task = task
+        self.preconditions = [Predicate.not_failed()]
         self.effects = list()
 
     @property
@@ -19,6 +34,15 @@ class Operator:
     @property
     def option(self):
         return self._option
+
+    def add_preconditions(self, predicates: List[Predicate]):
+        self.preconditions += predicates
+
+    def add_effect(self, effect: List[Predicate], probability: float = 1, reward: float = None):
+        self.effects.append((probability, effect, reward))
+
+    def is_probabilistic(self):
+        return len(self.effects) > 1
 
     # # todo: LOOK AT
     # def is_duplicate(self, other):

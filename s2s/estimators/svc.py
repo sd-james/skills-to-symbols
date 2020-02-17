@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
-from s2s.utils import show
+from s2s.utils import show, is_single_sample
 
 __author__ = 'Steve James and George Konidaris'
 
@@ -21,7 +21,7 @@ class SupportVectorClassifier:
         """
         self._mask = mask
         self._probabilistic = probabilistic
-        self._classifier = None
+        self._classifier: SVC = None
 
     @property
     def mask(self) -> List[int]:
@@ -53,17 +53,19 @@ class SupportVectorClassifier:
             show("Found best SVM hyperparams: C = {}, gamma = {}".format(params['C'], params['gamma']), verbose)
             # Now do Platt scaling with the optimal parameters
             self._classifier = SVC(probability=True, class_weight='balanced', C=params['C'], gamma=params['gamma'])
-            self._classifier.fit(X, y)
-            show("Classifier score: {}".format(self._classifier.score(X, y)), verbose)
+            self._classifier.fit(data, y)
+            show("Classifier score: {}".format(self._classifier.score(data, y)), verbose)
 
-    def probability(self, state: np.ndarray) -> float:
+    def probability(self, states: np.ndarray) -> float:
         """
         Compute the probability of the state given the learned classifier
-        :param state: the state
+        :param states: the states
         :return: the probability of the state according to the classifier
         """
-        t_state = state[self.mask]
+        masked_states = states[self.mask]
+        if is_single_sample(masked_states):
+            masked_states = masked_states.reshape(1, -1)
         if self._probabilistic:
-            return self._classifier.predict_proba(t_state.reshape(1, -1))[0][1]
+            return np.mean(self._classifier.predict_proba(masked_states)[0][1])
         else:
-            return self._classifier.predict(t_state.reshape(1, -1))[0]
+            return self._classifier.predict(masked_states)[0]

@@ -7,6 +7,15 @@ import pickle
 __author__ = 'Steve James'
 
 
+def is_single_sample(data: np.ndarray) -> bool:
+    """
+    Determine if the array is a single sample of data
+    :param data: the array
+    """
+    if len(data.shape) == 1:
+        return True
+    return data.shape[0] == 1
+
 def range_without(start, end, *skips):
     """
     Create a range while omitting certain values
