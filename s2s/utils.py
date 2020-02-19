@@ -1,10 +1,25 @@
+import multiprocessing
 import os
 import shutil
+from typing import Callable, List
+
 import pandas as pd
 import numpy as np
 import pickle
 
 __author__ = 'Steve James'
+
+
+def run_parallel(functions: List[Callable]):
+    """
+    Run the list of function in parallel and return the results in a list
+    :param functions: the functions to execute
+    :return: a list of results
+    """
+    n_procs = len(functions)
+    pool = multiprocessing.Pool(processes=n_procs)
+    processes = [pool.apply_async(functions[i]) for i in range(n_procs)]
+    return [p.get() for p in processes]
 
 
 def is_single_sample(data: np.ndarray) -> bool:
@@ -16,6 +31,7 @@ def is_single_sample(data: np.ndarray) -> bool:
         return True
     return data.shape[0] == 1
 
+
 def range_without(start, end, *skips):
     """
     Create a range while omitting certain values
@@ -26,6 +42,7 @@ def range_without(start, end, *skips):
     skip = set(skips)
     return [x for x in range(start, end) if x not in skip]
 
+
 def pd2np(data: pd.Series):
     """
     Convert a Pandas series of arrays to a numpy 2D array
@@ -33,6 +50,7 @@ def pd2np(data: pd.Series):
     :return: a numpy 2D array
     """
     return np.array([np.asfarray(x) for x in data.values])
+
 
 def show(data, verbose):
     """
@@ -128,17 +146,17 @@ def make_dir(path,
         # print("Directory missing, creating: " + path)
         os.makedirs(path)
     elif clean:
-            # Delete directory
-            has_files = False
-            for dirpath, dirnames, files in os.walk(path):
-                if files:
-                    has_files = True
-                break
-            # if has_files:
-            #     print("NOT DELETING!!!! TOO DANGEROUS!")
-            #     exit(1)
-            shutil.rmtree(path)
-            os.makedirs(path)
+        # Delete directory
+        has_files = False
+        for dirpath, dirnames, files in os.walk(path):
+            if files:
+                has_files = True
+            break
+        # if has_files:
+        #     print("NOT DELETING!!!! TOO DANGEROUS!")
+        #     exit(1)
+        shutil.rmtree(path)
+        os.makedirs(path)
 
 
 def copy_directory(source, dest):

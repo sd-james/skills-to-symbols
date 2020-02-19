@@ -1,58 +1,52 @@
-import itertools
+import random
 
-import gym
+from domain.treasure_game import TreasureGame
+from s2s.explore import collect_data
+from s2s.partition import partition_options
+from s2s.wrappers import MaxLength, ConditionalAction, ActionExecutable
 import numpy as np
 import pandas as pd
 
-from s2s.build_pddl import build_pddl
-from s2s.estimators.kde import KernelDensityEstimator
-from s2s.learn_operators import combine_learned_operators, learn_preconditions, learn_effects
-from s2s.partition import partition_options
-from s2s.utils import load, pd2np, show, save
-
 if __name__ == '__main__':
-    # start_factors = [[0, 1], [1,2], [2, 3]]
+
+    np.random.seed(0)
+    random.seed(0)
+
+    options_per_episode = 1000
+    n_episodes = 100
+    env = TreasureGame(force_render=True, fast_render=False)
+    env = ConditionalAction(env)
+    env = MaxLength(env, options_per_episode)  # as in the JAIR paper
+    env = ActionExecutable(env)
     #
-    # for length in range(1, len(start_factors)):
-    #     for subset in itertools.combinations(start_factors, length):
-    #
-    #         print(subset)
-
-    temp = [np.array([0, 1, 2, 3], dtype=object) for _ in range(10)]
-    temp = np.array(temp)
-
-    x = np.where(temp == (0, 1, 2, 3))
-    d = 0
-
-    env = gym.make('CartPole-v0')
-    # transition_data, initiation_data = collect_data(env, max_episode=50, verbose=True)
-    # transition_data.to_pickle('data/transition.pkl', compression='gzip')
-    # initiation_data.to_pickle('data/init.pkl', compression='gzip')
+    transition_data, initiation_data = collect_data(env, max_episode=n_episodes, verbose=True, n_processes=4)
+    transition_data.to_pickle('data/transition.pkl', compression='gzip')
+    initiation_data.to_pickle('data/init.pkl', compression='gzip')
 
     transition_data = pd.read_pickle('data/transition.pkl', compression='gzip')
     initiation_data = pd.read_pickle('data/init.pkl', compression='gzip')
 
     # partitions = partition_options(env, transition_data, verbose=True)
     # save(partitions, 'data/partitions.pkl')
-    partitions = load('data/partitions.pkl')
-
-    # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True)
-    # save(preconditions, 'data/preconditions.pkl')
-    preconditions = load('data/preconditions.pkl')
+    # partitions = load('data/partitions.pkl')
     #
-    # effects = learn_effects(env, partitions, verbose=True)
-    # save(effects, 'data/effects.pkl')
-    effects = load('data/effects.pkl')
-
-    operators = combine_learned_operators(env, partitions, preconditions, effects)
-
-    # # generate vocabulary
-    import time
-
-    millis = int(round(time.time() * 1000))
-    vocabulary, operators = build_pddl(env, transition_data, operators)
-    print(len(operators))
-    print('{} ms'.format(int(round(time.time() * 1000)) - millis))
+    # # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True)
+    # # save(preconditions, 'data/preconditions.pkl')
+    # preconditions = load('data/preconditions.pkl')
+    # #
+    # # effects = learn_effects(env, partitions, verbose=True)
+    # # save(effects, 'data/effects.pkl')
+    # effects = load('data/effects.pkl')
+    #
+    # operators = combine_learned_operators(env, partitions, preconditions, effects)
+    #
+    # # # generate vocabulary
+    # import time
+    #
+    # millis = int(round(time.time() * 1000))
+    # vocabulary, operators = build_pddl(env, transition_data, operators)
+    # print(len(operators))
+    # print('{} ms'.format(int(round(time.time() * 1000)) - millis))
     # save(vocabulary, 'data/predicates.pkl')
     # save(operators, 'data/operators.pkl')
     # propositions_dir = make_path(task_dir, 'propositions')

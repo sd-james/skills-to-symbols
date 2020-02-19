@@ -1,4 +1,5 @@
 import multiprocessing
+from functools import partial
 from typing import List, Tuple, Dict
 from warnings import warn
 
@@ -15,7 +16,7 @@ from s2s.estimators.kde import KernelDensityEstimator
 from s2s.pddl.operator import Operator
 from s2s.pddl.predicate import Predicate
 from s2s.pddl.unique_list import UniquePredicateList
-from s2s.utils import show, pd2np
+from s2s.utils import show, pd2np, run_parallel
 
 __author__ = 'Steve James and George Konidaris'
 
@@ -76,31 +77,15 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
     show("Generating full PDDL...", verbose)
 
-    n_procs = kwargs.get('n_processes', 4)
-    # n_procs = multiprocessing.cpu_count()
-    if n_procs == 1:
-        schemata = _build_pddl_operators(env, factors, operators, vocabularyc  , operator_predicates,
-                                         verbose=verbose, **kwargs)
-    else:
-        # do it in parallel!
-        show("Running on {} CPUs".format(n_procs), verbose)
-        schemata = list()
-        splits = np.array_split(operators, n_procs)
-        pool = multiprocessing.Pool(processes=n_procs)
-        results = [
-            pool.apply_async(_build_pddl_operators,
-                             args=(env, factors, splits[i], vocabulary, operator_predicates))  # todo how to pass verbose and kwargs here??
-            for i in range(n_procs)
-        ]
+    n_procs = kwargs.get('n_processes', 4)  # n_procs = multiprocessing.cpu_count()
+    # do it in parallel!  # TODO VERIFY NO ISSUES!
+    show("Running on {} CPUs".format(n_procs), verbose)
+    splits = np.array_split(operators, n_procs)
+    functions = [
+        partial(_build_pddl_operators, env, factors, splits[i], vocabulary, operator_predicates, verbose, **kwargs)
+        for i in range(n_procs)]
+    schemata = sum(run_parallel(functions), [])
 
-        schemata = sum([p.get() for p in results], [])
-        # for i in range(n_procs):
-        #     operator_segment = splits[i]
-        #     pool.apply_async(_build_pddl_operators,
-        #                      args=(factors, operator_segment, vocabulary, operator_predicates, verbose, kwargs),
-        #                      callback=lambda x: schemata.extend(x))
-        # pool.close()
-        # pool.join()
     return vocabulary, schemata
 
 
@@ -296,7 +281,7 @@ def _masks_overlap(propositions: List[Predicate]):
 
 
 def _generate_vocabulary(vocabulary: UniquePredicateList, operators: List[LearnedOperator], factors: List[List[int]],
-                         verbose=False) -> Dict[Tuple[LearnedOperator, int], List[Predicate]]:
+                         verbose=False, **kwargs) -> Dict[Tuple[LearnedOperator, int], List[Predicate]]:
     """
     Generate a vocabulary for the PDDL. This includes every possible proposition that could ever be required.
     :param vocabulary: the existing vocabulary of predicates

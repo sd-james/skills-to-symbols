@@ -1,0 +1,10 @@
+down_ladder_option
+go_left_option
+interact_option
+go_right_option
+go_right_option
+down_ladder_option
+go_right_option
+interact_option
+go_left_option
+go_left_option
