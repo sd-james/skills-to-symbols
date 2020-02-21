@@ -48,9 +48,6 @@ def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=
 
     episode_offset = int(kwargs.get('episode_offset', 0))  # used for parallel processing
 
-    if episode_offset != 75:
-        return None, None
-
     transition_data = pd.DataFrame(
         columns=['episode', 'state', 'option', 'reward', 'next_state', 'done', 'mask', 'next_options'])
     initiation_data = pd.DataFrame(columns=['state', 'option', 'can_execute'])

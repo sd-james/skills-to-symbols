@@ -8,7 +8,7 @@ class MaxLength(gym.Wrapper):
     A wrapper that limits the number of option executions in an episode before terminating
     """
 
-    def __init__(self, env: S2SEnv, max_episode_steps=None):
+    def __init__(self, env: gym.Env, max_episode_steps=None):
         super().__init__(env)
         if max_episode_steps is None and self.env.spec is not None:
             max_episode_steps = env.spec.max_episode_steps

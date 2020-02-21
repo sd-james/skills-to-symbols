@@ -236,6 +236,8 @@ class mine_domain:
     def can_go_left(self):    
         
         for yoff in [self.y_incr, yscale-self.y_incr]:
+            # TODO WHY OFFSET??
+            yoff = 0.5
             if(self.object_type_at(self.playerx - (self.player_width/2) - self.x_incr, self.playery + yoff) == WALL):
                 return False
             if(self.object_type_at(self.playerx - (self.player_width/2) - self.x_incr, self.playery + yoff) == DOOR):
@@ -247,7 +249,7 @@ class mine_domain:
         
         for yoff in [self.y_incr, yscale-self.y_incr]:
             # TODO WHY OFFSET??
-            yoff = 0
+            yoff = 0.5
             if(self.object_type_at(self.playerx + (self.player_width/2) + self.x_incr, self.playery + yoff) == WALL):
                 return False
             if(self.object_type_at(self.playerx + (self.player_width/2) + self.x_incr, self.playery + yoff) == DOOR):
