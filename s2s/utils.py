@@ -1,6 +1,7 @@
 import multiprocessing
 import os
 import shutil
+import warnings
 from typing import Callable, List
 
 import pandas as pd
@@ -62,13 +63,16 @@ def show(data, verbose):
         print(data)
 
 
-def save(object, filename, binary=True):
+def save(object, filename=None, binary=True):
     """
     Convenience method for saving object to file without risking wrong mode overwrites
     :param binary: whether to save as a binary file
     :param object: the object to pickle
     :param filename: the filename
     """
+    if filename is None:
+        warnings.warn("No filename specified, saving to temp.pkl...")
+        filename = 'temp.pkl'
     mode = 'wb' if binary else 'w'
     with open(filename, mode) as file:
         if binary:
@@ -78,12 +82,15 @@ def save(object, filename, binary=True):
     return filename
 
 
-def load(filename, binary=True):
+def load(filename=None, binary=True):
     """
     Convenience method for loading object from file without risking wrong mode overwrites
     :param binary: whether to load as a binary file
     :param filename: the filename
     """
+    if filename is None:
+        warnings.warn("No filename specified, loading from temp.pkl...")
+        filename = 'temp.pkl'
     mode = 'rb' if binary else 'r'
     with open(filename, mode) as file:
         return pickle.load(file)

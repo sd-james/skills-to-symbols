@@ -3,11 +3,13 @@ import random
 import time
 
 import numpy as np
+import pygame
 from gym.spaces import Discrete, Box
 
 from domain import mine_domain_drawer
 from domain.mine_domain import create_options
 from domain.mine_domain import mine_domain
+from domain.objects import goldcoin, key, handle, bolt
 from s2s.env import S2SEnv
 from s2s.utils import make_path
 
@@ -56,7 +58,39 @@ class TreasureGame(S2SEnv):
             self.drawer = mine_domain_drawer.drawer(self._env)
 
         self.drawer.draw_domain()
-        return self.drawer.screen
+        return pygame.surfarray.array3d(self.drawer.screen)
+
+    def _render_state(self, state: np.ndarray) -> np.ndarray:
+        desc = self._env.get_state_descriptors()
+        self._env.playerx = int(state[desc.index("playerx")] * self._env.width)
+        self._env.playery = int(state[desc.index("playery")] * self._env.height)
+
+        handle_no = 1
+
+        for obj in self._env.objects:
+            if (obj.has_state()):
+                if (isinstance(obj, goldcoin) or isinstance(obj, key)):
+                    x_label = type(obj).__name__ + ".x"
+                    y_label = type(obj).__name__ + ".y"
+                    xval = int(state[desc.index(x_label)] * self._env.width)
+                    yval = int(state[desc.index(y_label)] * self._env.height)
+                    obj.move_to_xy(xval, yval)
+                elif (isinstance(obj, handle)):
+                    label = 'handle' + str(handle_no) + '.angle'
+                    angle = state[desc.index(label)]
+                    obj.set_angle(angle)
+                    obj.previously_triggered = True
+                    handle_no = handle_no + 1
+                elif (isinstance(obj, bolt)):
+                    val = (state[desc.index("bolt.locked")] > 0.5)
+                    obj.set_val(val)
+
+        for obj in self._env.objects:
+            if (isinstance(obj, handle)):
+                self._env.previously_triggered = False
+        if self.drawer is None:
+            self.drawer = mine_domain_drawer.drawer(self._env)
+        return pygame.surfarray.array3d(self.drawer.draw_to_surface()).swapaxes(0, 1)  # swap because pygame
 
 
 if __name__ == '__main__':

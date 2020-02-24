@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import gym
 
+
 class S2SEnv(gym.Env, ABC):
     """
     An environment that forces the user to implement the neccesary methods
@@ -29,3 +30,17 @@ class S2SEnv(gym.Env, ABC):
             return self.action_space.sample()
         mask = self.available_mask
         return np.random.choice(np.arange(self.action_space.n), p=mask / mask.sum())
+
+    def render_state(self, state: np.ndarray) -> np.ndarray:
+        """
+        Return an image of the given state. Where state variables are missing, specify with np.nan
+        """
+        nan_mask = np.where(np.isnan(state))
+        state[nan_mask] = self.observation_space.sample()[nan_mask]
+        return self._render_state(state)
+
+    def _render_state(self, state: np.ndarray) -> np.ndarray:
+        """
+        Return an image of the given state. There should be no missing state variables (using render_state if so)
+        """
+        pass

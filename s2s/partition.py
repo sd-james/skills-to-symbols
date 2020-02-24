@@ -12,7 +12,7 @@ from typing import List, Dict
 
 from sklearn.cluster import DBSCAN
 
-from union_find import UnionFind
+from s2s.union_find import UnionFind
 
 __author__ = 'Steve James and George Konidaris'
 
@@ -36,7 +36,6 @@ def partition_options(env: gym.Env, transition_data: pd.DataFrame,
         partitioned_options[option] = _partition_option(option,
                                                         transition_data.loc[transition_data['option'] == option],
                                                         verbose=verbose, **kwargs)
-        break
     return partitioned_options
 
 
@@ -47,7 +46,7 @@ def _is_overlap_init(A: pd.DataFrame, B: pd.DataFrame, verbose=False, **kwargs):
     labels = [0] * len(X) + [1] * len(Y)
     overlap = silhouette_score(data, labels)
     show("\tSilhoette score: {}".format(overlap), verbose)
-    threshold = kwargs.get('init_overlap_threshold', 0.2)
+    threshold = kwargs.get('init_overlap_threshold', 0.05)
     return -threshold <= overlap <= threshold
 
 

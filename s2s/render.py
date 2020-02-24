@@ -1,101 +1,63 @@
 from collections import defaultdict
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
-import gym
+import numpy as np
 
+from s2s.env import S2SEnv
 from s2s.image import Image
 from s2s.partitioned_option import PartitionedOption
-from s2s.utils import show
+from s2s.utils import show, exists, make_dir, make_path
 
 
-def visualise_partitions(env: gym.Env,
+def visualise_partitions(env: S2SEnv,
                          option_partitions: Dict[int, List[PartitionedOption]],
-                         verbose=False):
+                         verbose=False) \
+        -> Dict[int, Dict[int, Tuple[np.ndarray, List[Tuple[float, np.ndarray, np.ndarray]]]]]:
+    """
+    Visualise a set of partitions
+    :param env: the domain
+    :param option_partitions: a dictionary listing, for each option, a list of partitions
+    :param verbose: the verbosity level
+    :return: a mapping that stores for each option and partition, an image of the start and end states
+    (with associated probabilities)
+    """
 
-    images = defaultdict(defaultdict(list))
-    for option in range(env.action_space.n):
+    images = defaultdict(dict)
+    for option, partitions in option_partitions.items():
 
-        partitions = option_partitions[option]
-        show("Visualising option {} with partition(s)".format(option, len(partitions)), verbose)
+        show("Visualising option {} with {} partition(s)".format(option, len(partitions)), verbose)
 
         for partition in partitions:
             start = Image.merge([env.render_state(state) for state in partition.states])
-            for probability, _, next_states, _ in partition.effects():
+            effects = list()
+            for probability, _, next_states, mask, in partition.effects():
                 end = Image.merge([env.render_state(state) for state in next_states])
+                effects.append((probability, mask, end))
+            images[option][partition.partition] = (start, effects)
+    return images
 
-            # TODO new
-            d = render(env, partition.states)
-            images = list()
-            for m, im in d.items():
-                im = Image.merge(im)
-                if len(im.shape) == 3:
-                    image = Image.to_image(im, mode='RGB')
-                else:
-                    image = Image.to_image(im)
-                images.append(image)
-            im = Image.combine(images)
 
-            filename = _make_filename(output_dir, options.describe(option), 'init', i + 1, partition.combined_mask,
-                                      'bmp')
-            Image.save(im, filename, mode='RGB')
-            # im.free()
+def save_visualised_partitions(directory: str,
+                               visualised_partitions: Dict[
+                                   int, Dict[int, Tuple[np.ndarray, List[Tuple[float, np.ndarray, np.ndarray]]]]],
+                               verbose=False,
+                               **kwargs) -> None:
+    """
+    Given visualised partitions, save them to file
+    :param directory: the directory to save them to
+    :param visualised_partitions: the set of partitions
+    :param verbose: the verbosity level
+    """
+    option_descriptor = kwargs.get('option_descriptor',
+                                   lambda option: 'Option-{}'.format(option))  # a function that describes the operator
 
-            if verbose:
-                print("\tPreconditions complete.")
-                print("*******************************************************")
-
-            # Write probabilities
-            filename = _make_filename(output_dir, options.describe(option), 'transition', i + 1,
-                                      partition.combined_mask, 'txt')
-
-            with open(filename, "w") as file:
-                t_prob = partition.get_transition_probabilities()
-                for item in t_prob:
-                    file.write("%s\n" % str(item))
-
-            if verbose:
-                print("\tTransition probabilities complete.")
-
-            # Write images
-            n_transition = partition.get_number_effects()
-            for j in range(0, n_transition):
-                target_states = partition.get_next_states(j)
-
-                # for state in target_states:
-                #     state = _flatten(state)
-                #     domain.describe_state(state, list(range(len(state))))
-                # print(' ## ')
-
-                # TODO old
-                # images = render(domain, target_states)
-                # im = Image.merge(images)
-                # filename = make_path(output_dir,
-                #                      options.describe(option) + "-effect" + str(i + 1) + "-" + str(j + 1) + ".bmp")
-                # Image.save(im, filename)
-                # im.free()
-
-                # TODO new
-                d = render(env, target_states)
-                images = list()
-                for m, im in d.items():
-                    im = Image.merge(im)
-                    if len(im.shape) == 3:
-                        image = Image.to_image(im, mode='RGB')
-                    else:
-                        image = Image.to_image(im)
-                    images.append(image)
-                im = Image.combine(images)
-                filename = _make_filename(output_dir, options.describe(option), 'effect', i + 1,
-                                          partition.combined_mask, 'bmp')
-
-                Image.save(im, filename, mode='RGB')
-
-                if verbose:
-                    print("\t\tImage " + str(j) + " complete.")
-
-            if verbose:
-                print("Images complete")
-                print("*******************************************************")
-
-    if verbose:
-        print("Partitions visualised.")
+    make_dir(directory)  # make directory if not exists
+    for option, partitions in visualised_partitions.items():
+        for partition, (start, effects) in partitions.items():
+            show("Visualising option {}, partition {}".format(option, partition), verbose)
+            filename = '{}-{}-init.bmp'.format(option_descriptor(option), partition)
+            Image.save(start, make_path(directory, filename), mode='RGB')
+            for i, (probability, masks, effect) in enumerate(effects):
+                filename = '{}-{}-eff-{}-{}-{}.bmp'.format(option_descriptor(option), partition, i,
+                                                           round(probability * 100), list(np.unique(masks)))
+                Image.save(effect, make_path(directory, filename), mode='RGB')

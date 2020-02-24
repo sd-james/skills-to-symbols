@@ -3,12 +3,13 @@ import random
 from domain.treasure_game import TreasureGame
 from s2s.explore import collect_data
 from s2s.partition import partition_options
+from s2s.render import visualise_partitions, save_visualised_partitions
 from s2s.wrappers import MaxLength, ConditionalAction, ActionExecutable
 import numpy as np
 import pandas as pd
 from s2s.utils import save, load
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     np.random.seed(1)
     random.seed(1)
 
@@ -26,11 +27,16 @@ if __name__ == '__main__':
     transition_data = pd.read_pickle('data/transition.pkl', compression='gzip')
     initiation_data = pd.read_pickle('data/init.pkl', compression='gzip')
 
-    partitions = partition_options(env, transition_data, verbose=True)
-    save(partitions, 'data/partitions.pkl')
+    # partitions = partition_options(env, transition_data, verbose=True)
+    # save(partitions, 'data/partitions.pkl')
     partitions = load('data/partitions.pkl')
 
-
+    env = TreasureGame()
+    # vis_partitions = visualise_partitions(env, partitions, verbose=True)
+    # save(vis_partitions)
+    vis_partitions = load()
+    save_visualised_partitions('data/vis_partitions', vis_partitions, verbose=True,
+                               option_descriptor=lambda option: env.option_names[option])
 
     #
     # # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True)
