@@ -1,3 +1,4 @@
+import threading
 from typing import List
 
 import numpy as np
@@ -41,7 +42,7 @@ class SupportVectorClassifier:
         gamma_range = kwargs.get('precondition_gamma_range', np.arange(4, 22))
 
         param_grid = dict(gamma=gamma_range, C=c_range)
-        grid = GridSearchCV(SVC(class_weight='balanced'), param_grid=param_grid, cv=3)  # 3 fold CV
+        grid = GridSearchCV(SVC(class_weight='balanced'), param_grid=param_grid, cv=3, n_jobs=-1)  # 3 fold CV
         data = X[:, self.mask]
         grid.fit(data, y)
 

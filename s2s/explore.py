@@ -1,24 +1,28 @@
+import multiprocessing
 import random
 from functools import partial
 
-import pandas as pd
 import gym
 import numpy as np
+import pandas as pd
 
-from s2s.env import S2SEnv
 from s2s.utils import show, run_parallel
 
 __author__ = 'Steve James and George Konidaris'
 
 
-def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=False, seed=None, **kwargs) -> (
+def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=False, seed=None, n_jobs=1,
+                 **kwargs) -> (
         pd.DataFrame, pd.DataFrame):
     """
-    Collect data from the environment through uniform random exploration
+    Collect data from the environment through uniform random exploration in parallel
+
     :param env: the environment
     :param max_timestep: the maximum number of timesteps in total (not to be confused with maximum time steps per episode) Default is infinity
     :param max_episode: the maximum number of episodes. Default is infinity
     :param verbose: whether to print additional information
+    :param seed: the random seed. Use for reproducibility
+    :param n_jobs: the number of processes to spawn to collect data in parallel. If -1, use all CPUs
     :return: data frames holding transition and initation data
     """
     if max_timestep == np.inf and max_episode == np.inf:
@@ -27,26 +31,41 @@ def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=
     if seed is not None:
         random.seed(seed)
         np.random.seed(seed)
-    n_procs = kwargs.get('n_processes', 1)
-    if n_procs > 1:
-        # do in parallel
-        max_timestep /= n_procs
-        max_episode /= n_procs
 
-        functions = [
-            partial(collect_data, env, max_timestep, max_episode, verbose,
-                    **{'seed': np.random.randint(0, 1000000),
-                       'episode_offset': max_episode * i
-                       })
-            for i in range(n_procs)]
+    if n_jobs == -1:
+        n_jobs = multiprocessing.cpu_count()
 
-        results = run_parallel(functions)
-        transition_data = pd.concat([x[0] for x in results], ignore_index=True)
-        initiation_data = pd.concat([x[1] for x in results], ignore_index=True)
-        return transition_data, initiation_data
+    # run collection in parallel
+    max_timestep /= n_jobs
+    max_episode /= n_jobs
+
+    functions = [
+        partial(_collect_data, env, np.random.randint(0, 1000000), max_timestep, max_episode, verbose,
+                int(max_episode * i))
+        for i in range(n_jobs)]
+
+    results = run_parallel(functions)
+    transition_data = pd.concat([x[0] for x in results], ignore_index=True)
+    initiation_data = pd.concat([x[1] for x in results], ignore_index=True)
+    return transition_data, initiation_data
 
 
-    episode_offset = int(kwargs.get('episode_offset', 0))  # used for parallel processing
+def _collect_data(env: gym.Env, seed=None, max_timestep=np.inf, max_episode=np.inf, verbose=False,
+                  episode_offset=0) -> (
+        pd.DataFrame, pd.DataFrame):
+    """
+    Collect data from the environment through uniform random exploration
+    :param env: the environment
+    :param seed: the random seed. Use for reproducibility
+    :param max_timestep: the maximum number of timesteps in total (not to be confused with maximum time steps per episode) Default is infinity
+    :param max_episode: the maximum number of episodes. Default is infinity
+    :param verbose: whether to print additional information
+    :return: data frames holding transition and initation data
+    """
+
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
 
     transition_data = pd.DataFrame(
         columns=['episode', 'state', 'option', 'reward', 'next_state', 'done', 'mask', 'next_options'])
@@ -66,7 +85,7 @@ def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=
             # timestep only counts if we actually executed an option
             if not failed:
                 n_timesteps += 1
-                mask = np.where(state != next_state)[0]
+                mask = np.where(np.array(state) != np.array(next_state))[0]  # check which indices are not equal!
                 next_options = info.get('next_actions', np.array([]))
                 transition_data.loc[len(transition_data)] = [n_episode + episode_offset, state, action,
                                                              reward, next_state, done, mask,

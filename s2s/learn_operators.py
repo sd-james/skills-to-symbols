@@ -1,5 +1,7 @@
+from functools import partial
 from typing import List, Dict, Tuple
 from warnings import warn
+from collections import ChainMap
 
 import gym
 import numpy as np
@@ -11,7 +13,7 @@ from s2s.estimators.svc import SupportVectorClassifier
 from s2s.estimators.svr import SupportVectorRegressor
 from s2s.feature_selection import _compute_precondition_mask
 from s2s.partitioned_option import PartitionedOption
-from s2s.utils import show, pd2np
+from s2s.utils import show, pd2np, run_parallel
 
 __author__ = 'Steve James and George Konidaris'
 
@@ -19,7 +21,7 @@ __author__ = 'Steve James and George Konidaris'
 def combine_learned_operators(env: gym.Env, partitioned_options: Dict[int, List[PartitionedOption]],
                               preconditions: Dict[Tuple[int, int], SupportVectorClassifier],
                               effects: Dict[
-                                Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]) \
+                                  Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]) \
         -> List[LearnedOperator]:
     """
     Merge all the learned partitions, preconditions and effects into a data structure
@@ -88,8 +90,21 @@ def learn_preconditions(env: gym.Env, init_data: pd.DataFrame, partitioned_optio
     :param verbose: the verbosity level
     :return: the classifiers
     """
+    n_procs = kwargs.get('n_processes', 1)
+    show("Running on {} CPUs".format(n_procs), verbose)
+    splits = np.array_split(range(env.action_space.n), n_procs)
+    functions = [
+        partial(_learn_preconditions, splits[i], init_data, partitioned_options, verbose, **kwargs)
+        for i in range(n_procs)]
+    preconditions = sum(run_parallel(functions), [])  # run in parallel
+    return dict(ChainMap(*preconditions))  # reduce to single dict
+
+
+def _learn_preconditions(options: List[int], init_data: pd.DataFrame,
+                         partitioned_options: Dict[int, List[PartitionedOption]],
+                         verbose=False, **kwargs) -> Dict[Tuple[int, int], SupportVectorClassifier]:
     preconditions = dict()
-    for option in range(env.action_space.n):
+    for option in options:
 
         negative_data = pd2np(init_data.loc[(init_data['option'] == option) &
                                             (init_data['can_execute'] == False)]['state'])
@@ -143,7 +158,6 @@ def _learn_precondition(partition: PartitionedOption, negative_samples: np.ndarr
         warn("Need positive and negative samples!")
         return None
 
-    data = np.vstack((positive_samples, negative_samples))
     labels = [1] * len(positive_samples) + [0] * len(negative_samples)
 
     show("Calculating mask for option {}, partition {} ...".format(partition.option, partition.partition), verbose)
@@ -151,5 +165,6 @@ def _learn_precondition(partition: PartitionedOption, negative_samples: np.ndarr
     precondition_mask = _compute_precondition_mask(positive_samples, negative_samples, labels, verbose=verbose,
                                                    **kwargs)
     svm = SupportVectorClassifier(precondition_mask)
+    data = np.vstack((positive_samples, negative_samples))
     svm.fit(data, labels, verbose=verbose, **kwargs)
     return svm

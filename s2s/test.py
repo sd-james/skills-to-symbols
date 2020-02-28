@@ -1,7 +1,11 @@
+
+
+
 import random
 
 from domain.treasure_game import TreasureGame
 from s2s.explore import collect_data
+from s2s.learn_operators import learn_preconditions
 from s2s.partition import partition_options
 from s2s.render import visualise_partitions, save_visualised_partitions
 from s2s.wrappers import MaxLength, ConditionalAction, ActionExecutable
@@ -13,34 +17,34 @@ if __name__ == '__main__':
     np.random.seed(1)
     random.seed(1)
 
-    options_per_episode = 500
+    options_per_episode = 1000
     n_episodes = 40
     env = TreasureGame()
-    env = ConditionalAction(env)  # support actions that are not executable everywhere
-    env = MaxLength(env, options_per_episode)  # restrict episode lengths
-    env = ActionExecutable(env)  # determine at each state which actions/options are executable
+    wrapper = ConditionalAction(env)  # support actions that are not executable everywhere
+    wrapper = MaxLength(wrapper, options_per_episode)  # restrict episode lengths
+    wrapper = ActionExecutable(wrapper)  # determine at each state which actions/options are executable
     #
-    # transition_data, initiation_data = collect_data(env, max_episode=n_episodes, verbose=True, n_processes=8)
+    # transition_data, initiation_data = collect_data(wrapper, max_episode=n_episodes, verbose=True, n_jobs=8)
     # transition_data.to_pickle('data/transition.pkl', compression='gzip')
     # initiation_data.to_pickle('data/init.pkl', compression='gzip')
 
-    transition_data = pd.read_pickle('data/transition.pkl', compression='gzip')
+    transition_data = pd.read_pickle('data/orig_data.pkl', compression='gzip')
     initiation_data = pd.read_pickle('data/init.pkl', compression='gzip')
-
-    # partitions = partition_options(env, transition_data, verbose=True)
+    #
+    partitions = partition_options(env, transition_data, verbose=True)
     # save(partitions, 'data/partitions.pkl')
-    partitions = load('data/partitions.pkl')
-
-    env = TreasureGame()
+    # partitions = load('data/partitions.pkl')
+    #
+    # env = TreasureGame()
     # vis_partitions = visualise_partitions(env, partitions, verbose=True)
     # save(vis_partitions)
-    vis_partitions = load()
-    save_visualised_partitions('data/vis_partitions', vis_partitions, verbose=True,
-                               option_descriptor=lambda option: env.option_names[option])
+    # vis_partitions = load()
+    # save_visualised_partitions('data/vis_partitions', vis_partitions, verbose=True,
+    #                            option_descriptor=lambda option: env.option_names[option])
 
     #
-    # # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True)
-    # # save(preconditions, 'data/preconditions.pkl')
+    # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_processes=4)
+    # save(preconditions, 'data/preconditions.pkl')
     # preconditions = load('data/preconditions.pkl')
     # #
     # # effects = learn_effects(env, partitions, verbose=True)

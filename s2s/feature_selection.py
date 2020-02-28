@@ -1,3 +1,4 @@
+import threading
 from typing import List, Dict
 from warnings import warn
 
@@ -95,7 +96,7 @@ def _get_orig_score_params(states: np.ndarray, labels: List[int], **kwargs):
     c_range = kwargs.get('precondition_c_range', np.arange(1, 16, 2))
     gamma_range = kwargs.get('precondition_gamma_range', np.arange(4, 22))
     param_grid = dict(gamma=gamma_range, C=c_range)
-    grid = GridSearchCV(SVC(class_weight='balanced'), param_grid=param_grid, cv=3)  # 3 fold CV
+    grid = GridSearchCV(SVC(class_weight='balanced'), param_grid=param_grid, cv=3, n_jobs=-1)  # 3 fold CV
     grid.fit(states, labels)
     # try:
     #     grid.fit(states, labels)

@@ -50,6 +50,7 @@ class TreasureGame(S2SEnv):
         r = option.run()
         state = self._env.get_state()
         done = self._env.player_got_goldcoin()
+        done = False
         return state, r, done, {}
 
     def render(self, mode='human'):
@@ -95,7 +96,7 @@ class TreasureGame(S2SEnv):
 
 if __name__ == '__main__':
 
-    env = TreasureGame()
+    env = TreasureGame(fast_render=False)
 
     random.seed(0)
     np.random.seed(0)
