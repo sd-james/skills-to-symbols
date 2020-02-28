@@ -28,12 +28,13 @@ def visualise_partitions(env: S2SEnv,
         show("Visualising option {} with {} partition(s)".format(option, len(partitions)), verbose)
 
         for partition in partitions:
-            start = Image.merge([env.render_state(state) for state in partition.states])
+
             effects = list()
-            for probability, _, next_states, mask, in partition.effects():
+            for probability, states, _, next_states, mask, in partition.effects():
+                start = Image.merge([env.render_state(state) for state in states])
                 end = Image.merge([env.render_state(state) for state in next_states])
-                effects.append((probability, mask, end))
-            images[option][partition.partition] = (start, effects)
+                effects.append((probability, start, mask, end))
+            images[option][partition.partition] = effects
     return images
 
 
@@ -53,11 +54,12 @@ def save_visualised_partitions(directory: str,
 
     make_dir(directory)  # make directory if not exists
     for option, partitions in visualised_partitions.items():
-        for partition, (start, effects) in partitions.items():
+        for partition, effects in partitions.items():
             show("Visualising option {}, partition {}".format(option, partition), verbose)
-            filename = '{}-{}-init.bmp'.format(option_descriptor(option), partition)
-            Image.save(start, make_path(directory, filename), mode='RGB')
-            for i, (probability, masks, effect) in enumerate(effects):
+
+            for i, (probability, start, masks, effect) in enumerate(effects):
+                filename = '{}-{}-init.bmp'.format(option_descriptor(option), partition)
+                Image.save(start, make_path(directory, filename), mode='RGB')
                 filename = '{}-{}-eff-{}-{}-{}.bmp'.format(option_descriptor(option), partition, i,
                                                            round(probability * 100), list(np.unique(masks)))
                 Image.save(effect, make_path(directory, filename), mode='RGB')

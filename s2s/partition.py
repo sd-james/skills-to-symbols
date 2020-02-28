@@ -30,6 +30,7 @@ def partition_options(env: gym.Env, transition_data: pd.DataFrame,
         raise ValueError("Action space must be discrete")
 
     partitioned_options = dict()
+    count = 0
     for option in range(env.action_space.n):
 
         show('Partitioning option {}'.format(option), verbose)
@@ -37,6 +38,9 @@ def partition_options(env: gym.Env, transition_data: pd.DataFrame,
         partitioned_options[option] = _partition_option(option,
                                                         transition_data.loc[transition_data['option'] == option],
                                                         verbose=verbose, **kwargs)
+        count += len(partitioned_options[option])
+
+    show("{} total partitions discovered".format(count), verbose)
     return partitioned_options
 
 

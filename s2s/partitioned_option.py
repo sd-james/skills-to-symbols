@@ -17,8 +17,8 @@ class PartitionedOption:
         self._partition = partition
         self._states = pd2np(init_cluster['state'])
         total_samples = sum(len(effect['next_state']) for effect in effects)
-        self._effects = [(len(effect['next_state']) / total_samples, effect[['reward', 'next_state', 'mask']]) for
-                         effect in effects]
+        self._effects = [(len(effect['next_state']) / total_samples, effect[['state', 'reward', 'next_state', 'mask']])
+                         for effect in effects]
 
     @property
     def option(self):
@@ -34,4 +34,5 @@ class PartitionedOption:
 
     def effects(self):
         for probability, frame in self._effects:
-            yield probability, pd2np(frame['reward']), pd2np(frame['next_state']), pd2np(frame['mask']).astype(int)
+            yield probability, pd2np(frame['state']), pd2np(frame['reward']), pd2np(frame['next_state']), pd2np(
+                frame['mask']).astype(int)

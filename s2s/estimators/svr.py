@@ -23,8 +23,8 @@ class SupportVectorRegressor:
         :param y: the rewards received
         :param verbose: the verbosity level
         """
-        c_range = kwargs.get('reward_c_range', np.arange(1, 16, 2))
-        gamma_range = kwargs.get('reward_gamma_range', np.arange(4, 22))
+        c_range = kwargs.get('reward_c_range', np.arange(2, 50, 4))
+        gamma_range = kwargs.get('reward_gamma_range', np.arange(2, 50, 4))
         param_grid = dict(gamma=gamma_range, C=c_range)
         grid = GridSearchCV(SVR(kernel='rbf'), param_grid=param_grid, cv=3)  # 3 fold CV
         grid.fit(X, y)

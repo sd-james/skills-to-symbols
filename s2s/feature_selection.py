@@ -1,5 +1,5 @@
 import threading
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from warnings import warn
 
 import numpy as np
@@ -22,28 +22,6 @@ def _compute_precondition_mask(positive_samples: np.ndarray, negative_samples: n
     :param verbose: the verbosity level
     :return: the mask
     """
-    # the max number of samples to use for computing the mask
-    max_precondition_mask_samples = kwargs.get('max_precondition_mask_samples', np.inf)
-
-    n_samples = len(negative_samples) + len(positive_samples)
-    if n_samples > max_precondition_mask_samples:
-
-        if len(positive_samples) < 10:
-            # very little data. Don't lose it!
-            n_positive = len(positive_samples)
-            n_negative = max_precondition_mask_samples - n_positive
-        else:
-            # resample but maintain ratio
-            n_negative = round(max_precondition_mask_samples * len(negative_samples) / n_samples)
-            n_positive = max_precondition_mask_samples - n_negative
-        # redo the labels
-        labels = [1] * n_positive + [0] * n_negative
-
-        positive_samples = positive_samples[
-            np.random.choice(len(positive_samples), n_positive, replace=False)]
-        negative_samples = negative_samples[
-            np.random.choice(len(negative_samples), n_negative, replace=False)]
-
     samples = np.vstack((positive_samples, negative_samples))
 
     # compute the precondition mask through feature selection
@@ -57,7 +35,6 @@ def _compute_precondition_mask(positive_samples: np.ndarray, negative_samples: n
     threshold = kwargs.get('mask_selection_threshold', 0.02)
 
     # try remove each state variable in turn, see what the score is
-    latest_score = 0
     for m in range(n_vars):
         used_vars = range_without(0, n_vars, m)
         subset_score = _get_subset_score(samples, labels, used_vars, params)
@@ -66,6 +43,10 @@ def _compute_precondition_mask(positive_samples: np.ndarray, negative_samples: n
             # removing the variable damaged the score. So keep it!
             show("Variable {} causes damage when removed. Keeping...".format(m), verbose)
             mask.append(m)
+
+    # if no mask, just find the best one so far
+    if len(mask) == 0:
+        mask.append(np.argmax([_get_subset_score(samples, labels, [i], params) for i in range(n_vars)]))
 
     latest_score = _get_subset_score(samples, labels, mask, params)
     # now try adding variables back!
@@ -94,7 +75,7 @@ def _get_orig_score_params(states: np.ndarray, labels: List[int], **kwargs):
         warn("There is only one class. SVM cannot handle this case")
         return 1, {'gamma': 5, 'C': 1}
     c_range = kwargs.get('precondition_c_range', np.arange(1, 16, 2))
-    gamma_range = kwargs.get('precondition_gamma_range', np.arange(4, 22))
+    gamma_range = kwargs.get('precondition_gamma_range', np.arange(4, 22, 2))
     param_grid = dict(gamma=gamma_range, C=c_range)
     grid = GridSearchCV(SVC(class_weight='balanced'), param_grid=param_grid, cv=3, n_jobs=-1)  # 3 fold CV
     grid.fit(states, labels)

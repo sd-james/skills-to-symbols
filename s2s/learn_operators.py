@@ -50,8 +50,24 @@ def learn_effects(env: gym.Env, partitioned_options: Dict[int, List[PartitionedO
     :param verbose: the verbosity level
     :return: the probability, next-state estimators and reward estimators
     """
+    n_jobs = kwargs.get('n_jobs', 1)
+    show("Running on {} CPUs".format(n_jobs), verbose)
+    splits = np.array_split(range(env.action_space.n), n_jobs)
+    functions = [
+        partial(_learn_effects, splits[i], partitioned_options, verbose, **kwargs)
+        for i in range(n_jobs)]
+    # run in parallel
+    effects: List[
+        Dict[Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]] = run_parallel(
+        functions)
+    return dict(ChainMap(*effects))  # reduce to single dict
+
+
+def _learn_effects(options: List[int], partitioned_options: Dict[int, List[PartitionedOption]],
+                   verbose=False, **kwargs) \
+        -> Dict[Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]:
     effects = dict()
-    for option in range(env.action_space.n):
+    for option in options:
 
         for i, partition in enumerate(partitioned_options[option]):
 
@@ -59,7 +75,7 @@ def learn_effects(env: gym.Env, partitioned_options: Dict[int, List[PartitionedO
 
             probabilistic_outcomes = list()  # a list of tuples (prob, effect estimator, reward estimator)
 
-            for j, (prob, rewards, next_states, masks) in enumerate(partition.effects()):
+            for j, (prob, states, rewards, next_states, masks) in enumerate(partition.effects()):
                 show("Processing probabilistic effect {}".format(j), verbose)
 
                 # make sure no issues with masks. They should all be the same,  else there's a problem with partitioning
@@ -73,7 +89,7 @@ def learn_effects(env: gym.Env, partitioned_options: Dict[int, List[PartitionedO
                 effect.fit(next_states, verbose=verbose, **kwargs)  # compute the effect
                 show("Fitting reward estimator", verbose)
                 reward_estimator = SupportVectorRegressor()
-                reward_estimator.fit(partition.states, rewards, verbose=verbose, **kwargs)  # estimate the reward
+                reward_estimator.fit(states, rewards, verbose=verbose, **kwargs)  # estimate the reward
                 probabilistic_outcomes.append((prob, effect, reward_estimator))
             effects[(option, partition.partition)] = probabilistic_outcomes
 
@@ -90,13 +106,14 @@ def learn_preconditions(env: gym.Env, init_data: pd.DataFrame, partitioned_optio
     :param verbose: the verbosity level
     :return: the classifiers
     """
-    n_procs = kwargs.get('n_processes', 1)
-    show("Running on {} CPUs".format(n_procs), verbose)
-    splits = np.array_split(range(env.action_space.n), n_procs)
+    n_jobs = kwargs.get('n_jobs', 1)
+    show("Running on {} CPUs".format(n_jobs), verbose)
+    splits = np.array_split(range(env.action_space.n), n_jobs)
     functions = [
         partial(_learn_preconditions, splits[i], init_data, partitioned_options, verbose, **kwargs)
-        for i in range(n_procs)]
-    preconditions = sum(run_parallel(functions), [])  # run in parallel
+        for i in range(n_jobs)]
+    # run in parallel
+    preconditions: List[Dict[Tuple[int, int], SupportVectorClassifier]] = run_parallel(functions)
     return dict(ChainMap(*preconditions))  # reduce to single dict
 
 
@@ -121,6 +138,7 @@ def _learn_preconditions(options: List[int], init_data: pd.DataFrame,
             precondition = _learn_precondition(partition, negative_samples, positive_samples,
                                                verbose=verbose, **kwargs)
             preconditions[(option, partition.partition)] = precondition
+            break
     return preconditions
 
 
@@ -158,9 +176,13 @@ def _learn_precondition(partition: PartitionedOption, negative_samples: np.ndarr
         warn("Need positive and negative samples!")
         return None
 
-    labels = [1] * len(positive_samples) + [0] * len(negative_samples)
-
     show("Calculating mask for option {}, partition {} ...".format(partition.option, partition.partition), verbose)
+
+    # the max number of samples to use for computing the mask
+    max_precondition_samples = kwargs.get('max_precondition_samples', np.inf)
+    # resample if too much data
+    positive_samples, negative_samples = _resample(positive_samples, negative_samples, max_precondition_samples)
+    labels = [1] * len(positive_samples) + [0] * len(negative_samples)
 
     precondition_mask = _compute_precondition_mask(positive_samples, negative_samples, labels, verbose=verbose,
                                                    **kwargs)
@@ -168,3 +190,34 @@ def _learn_precondition(partition: PartitionedOption, negative_samples: np.ndarr
     data = np.vstack((positive_samples, negative_samples))
     svm.fit(data, labels, verbose=verbose, **kwargs)
     return svm
+
+
+def _resample(positive_samples: np.ndarray, negative_samples: np.ndarray, max_samples: int) -> Tuple[
+    np.ndarray, np.ndarray]:
+    """
+    Resample the data so the total is less than the maximum number of samples. Maintain the ratio
+    :param positive_samples: the positive samples
+    :param negative_samples: the negative samples
+    :param max_samples: the total number of samples required
+    :return: a subset of the initial samples, with their ratios maintained
+    """
+    n_samples = len(negative_samples) + len(positive_samples)
+    if n_samples > max_samples:
+
+        if len(positive_samples) < 10:
+            # very little data. Don't lose it!
+            n_positive = len(positive_samples)
+            n_negative = max_samples - n_positive
+        else:
+            # resample but maintain ratio
+            n_negative = round(max_samples * len(negative_samples) / n_samples)
+            n_positive = max_samples - n_negative
+        positive_samples = positive_samples[
+            np.random.choice(len(positive_samples), n_positive, replace=False)]
+        negative_samples = negative_samples[
+            np.random.choice(len(negative_samples), n_negative, replace=False)]
+
+        if len(positive_samples) + len(negative_samples) != max_samples:
+            raise ValueError("Resampling went wrong!")
+
+    return positive_samples, negative_samples
