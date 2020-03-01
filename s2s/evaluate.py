@@ -3,7 +3,9 @@ from typing import List
 import gym
 import numpy as np
 
+from domain.treasure_game import TreasureGame
 from s2s.learned_operator import LearnedOperator
+from s2s.utils import load
 
 
 def evaluate_plan(env: gym.Env, operators: List[LearnedOperator], plan: List[int], use_rewards=True, n_samples=100,
@@ -47,3 +49,13 @@ def _evaluate_plan(states: np.ndarray, operators: List[LearnedOperator], plan: L
             if total_score > best_score:
                 best_score = total_score
     return best_score
+
+
+if __name__ == '__main__':
+
+    env = TreasureGame()
+    operators = load('data/operators.pkl')
+    plan = [3, 0, 1, 1]
+    evaluate_plan(env, operators, plan)
+    #                    0       1         2           3            4        5            6          7          8
+    # option_list = [go_left, go_right, up_ladder, down_ladder, interact, down_left, down_right, jump_left, jump_right]

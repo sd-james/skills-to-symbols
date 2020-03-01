@@ -63,7 +63,7 @@ class SupportVectorClassifier:
         :param states: the states
         :return: the probability of the state according to the classifier
         """
-        masked_states = states[self.mask]
+        masked_states = states[:, self.mask]
         if is_single_sample(masked_states):
             masked_states = masked_states.reshape(1, -1)
         if self._probabilistic:

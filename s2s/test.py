@@ -70,24 +70,24 @@ if __name__ == '__main__':
 
     schemata = load('data/schemata.pkl')
 
-    # pddl = PDDLDomain(env, vocabulary, schemata)
-    # save(pddl, 'data/domain.pddl', binary=False)
-    # print(pddl)
+    pddl = PDDLDomain(env, vocabulary, schemata)
+    save(pddl, 'data/domain.pddl', binary=False)
+    print(pddl)
     #
-    pddl_problem = PDDLProblem('test', env.name)
-    pddl_problem.add_start_proposition(Proposition.not_failed())
-    pddl_problem.add_goal_proposition(Proposition.not_failed())
-    pddl_problem.add_goal_proposition(vocabulary._list[-1])
-    vars = set()
-    for symbol in vocabulary:
-        mask = symbol.mask
-        if not any(m in vars for m in mask):
-            pddl_problem.add_start_proposition(symbol)
-            vars.update(mask)
-            if len(vars) == env.observation_space.shape[0]:
-                break
-    print(pddl_problem)
-
+    # pddl_problem = PDDLProblem('test', env.name)
+    # pddl_problem.add_start_proposition(Proposition.not_failed())
+    # pddl_problem.add_goal_proposition(Proposition.not_failed())
+    # pddl_problem.add_goal_proposition(vocabulary._list[-1])
+    # vars = set()
+    # for symbol in vocabulary:
+    #     mask = symbol.mask
+    #     if not any(m in vars for m in mask):
+    #         pddl_problem.add_start_proposition(symbol)
+    #         vars.update(mask)
+    #         if len(vars) == env.observation_space.shape[0]:
+    #             break
+    # print(pddl_problem)
+    #
 
 
 

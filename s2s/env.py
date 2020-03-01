@@ -50,4 +50,4 @@ class S2SEnv(gym.Env, ABC):
         return type(self).__name__
 
     def describe_option(self, option: int) -> str:
-        return 'Option{}'.format(option)
+        return 'option-{}'.format(option)

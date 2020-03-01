@@ -7,6 +7,7 @@ from s2s.utils import indent
 
 
 class Operator:
+
     def __init__(self, learned_operator: LearnedOperator, name: str = None, task: int = None):
         """
         Create a new PDDL operator
@@ -21,7 +22,7 @@ class Operator:
         if name is not None:
             self.name = name.replace(' ', '-')
         else:
-            self.name = 'Option-{}-Partition-{}'.format(self.option, self.partition)
+            self.name = 'option-{}-partition-{}'.format(self.option, self.partition)
             if task is not None:
                 self.name = 'Task-{}-{}'.format(task, self.name)
         self._task = task
@@ -45,53 +46,53 @@ class Operator:
     def is_probabilistic(self):
         return len(self.effects) > 1
 
-    def __format__(self, format_spec: str):
-        """
-        Format the operator
-        :param format_spec: p specifies that the PDDL is probabilistic, and r specifies it should use rewards
-        """
-        precondition = self._propositions_to_str(self.preconditions)
+    def __str__(self):
+        return str(PrettyPrint(self))
 
-        probabilistic = 'p' in format_spec
-        use_rewards = 'r' in format_spec
 
-        if probabilistic:
-            effects = self.effects
+class PrettyPrint:
+
+    def __init__(self, operator: Operator, index=None, probabilistic=True, use_rewards=True,
+                 option_descriptor=None):
+        self._operator = operator
+        self._probabilistic = probabilistic
+        self._use_rewards = use_rewards
+        self._option_descriptor = option_descriptor
+        self._index = index
+
+    def __str__(self):
+        precondition = self._propositions_to_str(self._operator.preconditions)
+
+        if self._probabilistic:
+            effects = self._operator.effects
         else:
-            effects = [max(self.effects, key=lambda x: x[0])]  # get most probable
+            effects = [max(self._operator.effects, key=lambda x: x[0])]  # get most probable
 
         if len(effects) == 1:
             end = None
-            if use_rewards and effects[0][2] is not None:
-                end = '{} (reward) {:.2f}'.format('increase' if effects[0][2] >= 0 else 'decrease', abs(effects[0][2]))
+            if self._use_rewards and effects[0][2] is not None:
+                end = '{} (reward) {:.2f}'.format('increase' if effects[0][2] >= 0 else 'decrease',
+                                                  abs(effects[0][2]))
             effect = self._propositions_to_str(effects[0][1], end=end)
         else:
             effect = '(probabilistic '
             for prob, eff, reward in effects:
                 end = None
-                if use_rewards and reward is not None:
+                if self._use_rewards and reward is not None:
                     end = '{} (reward) {:.2f}'.format('increase' if reward >= 0 else 'decrease', abs(reward))
                 effect += indent('\n\t{} {}'.format(prob, self._propositions_to_str(eff, end)), 3)
             effect += '\n\t\t\t)\n\t'
-        return '(:action {}\n\t:parameters ()\n\t:precondition ({})\n\t:effect ({})\n)'.format(self.name,
+
+        if self._option_descriptor is None:
+            name = self._operator.name
+        else:
+            name = '{}-partition-{}'.format(self._option_descriptor(self._operator.option), self._operator.partition)
+        if self._index is not None:
+            name += '-{}'.format(self._index)
+
+        return '(:action {}\n\t:parameters ()\n\t:precondition ({})\n\t:effect ({})\n)'.format(name,
                                                                                                precondition,
                                                                                                effect)
-
-    def __str__(self):
-
-        return '{:pr}'.format(self)
-
-        # precondition = self._propositions_to_str(self.preconditions)
-        # if len(self.effects) == 1:
-        #     effect = self._propositions_to_str(self.effects[0][1])
-        # else:
-        #     effect = '(probabilistic '
-        #     for prob, eff, reward in self.effects:
-        #         effect += indent('\n\t{} {}'.format(prob, self._propositions_to_str(eff)), 3)
-        #     effect += '\n\t\t\t)\n\t'
-        # return '(:action {}\n\t:parameters ()\n\t:precondition ({})\n\t:effect ({})\n)'.format(self.name,
-        #                                                                                        precondition,
-        #                                                                                        effect)
 
     def _propositions_to_str(self, propositions: List[Proposition], end=None) -> str:
         if len(propositions) == 0:

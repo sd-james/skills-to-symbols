@@ -108,6 +108,11 @@ class TreasureGame(S2SEnv):
             self.drawer = mine_domain_drawer.drawer(self._env)
         return pygame.surfarray.array3d(self.drawer.draw_to_surface()).swapaxes(0, 1)  # swap because pygame
 
+    def describe_option(self, option: int) -> str:
+        if option < 0 or option >= len(self.option_names):
+            return super().describe_option(option)
+        return self.option_names[option]
+
 
 if __name__ == '__main__':
 

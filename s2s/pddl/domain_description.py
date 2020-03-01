@@ -1,11 +1,10 @@
-
 from typing import Iterable, List, Any
 
 import gym
 
 from s2s.env import S2SEnv
 from s2s.pddl import operator
-from s2s.pddl.operator import Operator
+from s2s.pddl.operator import Operator, PrettyPrint
 from s2s.pddl.proposition import Proposition
 from s2s.utils import indent
 
@@ -36,7 +35,9 @@ class PDDLDomain:
         if self._rewards:
             format_spec += 'r'
 
-        operators = '\n\n'.join([format(x, format_spec) for x in self._operators])
+        operators = '\n\n'.join(
+            [str(PrettyPrint(x, i, self._probabilistic, self._rewards, self._env.describe_option)) for i, x in
+             enumerate(self._operators)])
 
         description = '{}\n({}\n{}\n\n{}\n\n{}\n)'.format(
             comment,
