@@ -2,13 +2,36 @@ import multiprocessing
 import os
 import shutil
 import warnings
-from typing import Callable, List
+from typing import Callable, List, Iterable, Any
 
 import pandas as pd
 import numpy as np
 import pickle
+import textwrap
 
 __author__ = 'Steve James'
+
+
+def indent(x: Any, count: int = 1) -> str:
+    """
+    Indent an object
+    :param x: the object
+    :param count: the number of tab spaces
+    """
+    return textwrap.indent(str(x), '\t' * count)
+
+def select_rows(data: pd.DataFrame, indices: Iterable, reset_index=True) -> pd.DataFrame:
+    """
+    Select a set of rows from a data frame
+    :param data: the data frame
+    :param indices: teh row indices
+    :param reset_index: whether the indices should be reset
+    :return: the subframe
+    """""
+    frame = data.loc[indices]
+    if reset_index:
+        return frame.reset_index(drop=True)
+    return frame
 
 
 def run_parallel(functions: List[Callable]):

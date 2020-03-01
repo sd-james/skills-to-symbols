@@ -1,12 +1,36 @@
 from collections import defaultdict
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Iterable
 
 import numpy as np
 
 from s2s.env import S2SEnv
 from s2s.image import Image
 from s2s.partitioned_option import PartitionedOption
+from s2s.pddl.proposition import Proposition
 from s2s.utils import show, exists, make_dir, make_path
+
+
+def visualise_symbols(directory: str, env: S2SEnv, symbols: Iterable[Proposition], verbose=False, **kwargs) -> None:
+    """
+    Visualise a set symbols
+    :param directory: the directory to save them to
+    :param env: the domain
+    :param symbols: the list of propositions
+    :param verbose: the verbosity level
+    """
+
+    n_samples = 100
+    make_dir(directory)  # make directory if not exists
+    for symbol in symbols:
+        show("Visualising {}".format(symbol), verbose)
+        samples = np.full((n_samples, env.observation_space.shape[0]), np.nan)
+        samples[:, symbol.mask] = symbol.sample(n_samples)
+        if kwargs.get('render', None) is not None:
+            im = kwargs.get('render')(samples)
+        else:
+            im = Image.merge([env.render_state(state, agent_alpha=0.5) for state in samples])
+        filename = '{}_{}.bmp'.format(symbol, symbol.mask)
+        Image.save(im, make_path(directory, filename), mode='RGB')
 
 
 def visualise_partitions(env: S2SEnv,

@@ -1,6 +1,6 @@
 import multiprocessing
 from functools import partial
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Set, Iterable
 from warnings import warn
 
 import gym
@@ -14,14 +14,38 @@ from s2s.estimators.svc import SupportVectorClassifier
 from s2s.learned_operator import LearnedOperator
 from s2s.estimators.kde import KernelDensityEstimator
 from s2s.pddl.operator import Operator
-from s2s.pddl.predicate import Predicate
+from s2s.pddl.proposition import Proposition
 from s2s.pddl.unique_list import UniquePredicateList
-from s2s.utils import show, pd2np, run_parallel
+from s2s.utils import show, pd2np, run_parallel, range_without, save, load
 
 __author__ = 'Steve James and George Konidaris'
 
 
-def _equal_dists(x: KernelDensityEstimator, y: KernelDensityEstimator) -> bool:
+def _overlapping_dists(x: KernelDensityEstimator, y: KernelDensityEstimator) -> bool:
+    """
+    A measure of similarity from the original paper that compares means, mins and maxes.
+    :param x: the first distribution
+    :param y: the second distribution
+    """
+    if set(x.mask) != set(y.mask):
+        return False
+
+    dat1 = x.sample(100)
+    dat2 = y.sample(100)
+
+    mean1 = np.mean(dat1)
+    mean2 = np.mean(dat2)
+    if np.linalg.norm(mean1 - mean2) > 0.1:
+        return False
+
+    ndims = len(x.mask)
+    for n in range(ndims):
+        if np.min(dat1[:, n]) > np.max(dat2[:, n]) or np.min(dat2[:, n]) > np.max(dat1[:, n]):
+            return False
+    return True
+
+
+def _close_silhouette(x: KernelDensityEstimator, y: KernelDensityEstimator) -> bool:
     """
     Determine whether two effect distributions are equal. Here this is approximated by drawing samples and computing the
     silhouette score. If its absolute value is less than 0.2, the two distributions are equal.
@@ -52,12 +76,14 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     :param verbose: the verbosity level
     :return: the predicates and PDDL operators
     """
-    dist_comparator = kwargs.get('dist_comparator', _equal_dists)
+    dist_comparator = kwargs.get('dist_comparator', _overlapping_dists)
     vocabulary = UniquePredicateList(dist_comparator)
     # Factorise the state space: see JAIR paper for more
     show("Factorising state space...", verbose)
     n_dims = env.observation_space.shape[-1]
     factors = _factorise(operators, n_dims, verbose=verbose)
+
+    show("Final factors:\n\n{}".format(factors), verbose)
 
     # generate a distribution over start states
     show("Generating start state symbols...", verbose)
@@ -65,7 +91,12 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
 
     # integrate all possible combinations of factors out of the start state distribution
     start_factors = _extract_factors(start_distribution.mask, factors)
-    for length in range(1, len(start_factors)):
+
+    # TODO: I believe in theory it should be all possible combinations (i.e. N choose 1, N choose 2...), but the
+    #  original code called for generating each proposition with a single factor left out (i.e. N choose N-1).
+    #  May need to come back to this at some point
+    # for length in range(1, len(start_factors)):
+    for length in range(len(start_factors) - 1, len(start_factors)):
         for subset in itertools.combinations(start_factors, length):
             new_dist = start_distribution.integrate_out(np.concatenate(subset))
             vocabulary.append(new_dist)
@@ -75,23 +106,28 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
 
     # get propositions directly from effects
     operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
+    show("Total propositions: {}".format(len(vocabulary)), verbose)
+
+    save((vocabulary, operator_predicates))
+    vocabulary, operator_predicates = load()
     show("Generating full PDDL...", verbose)
 
-    n_procs = kwargs.get('n_processes', 4)  # n_procs = multiprocessing.cpu_count()
+    n_jobs = kwargs.get('n_jobs', 1)  # n_procs = multiprocessing.cpu_count()
     # do it in parallel!  # TODO VERIFY NO ISSUES!
-    show("Running on {} CPUs".format(n_procs), verbose)
-    splits = np.array_split(operators, n_procs)
+    show("Running on {} CPUs".format(n_jobs), verbose)
+    splits = np.array_split(operators, n_jobs)
     functions = [
         partial(_build_pddl_operators, env, factors, splits[i], vocabulary, operator_predicates, verbose, **kwargs)
-        for i in range(n_procs)]
+        for i in range(n_jobs)]
     schemata = sum(run_parallel(functions), [])
 
+    show("Found {} PDDL operators".format(len(schemata)), verbose)
     return vocabulary, schemata
 
 
 def _build_pddl_operators(env: gym.Env, factors: List[List[int]], operators: List[LearnedOperator],
                           vocabulary: UniquePredicateList,
-                          operator_predicates: Dict[Tuple[LearnedOperator, int], List[Predicate]],
+                          operator_predicates: Dict[Tuple[LearnedOperator, int], List[Proposition]],
                           verbose=False, **kwargs):
     """
     Generate the high-level PDDL operators, given the vocabulary and learned operators
@@ -105,18 +141,18 @@ def _build_pddl_operators(env: gym.Env, factors: List[List[int]], operators: Lis
     """
     schemata = list()
     for i, operator in enumerate(operators):
-        show("Processing {}/{} operators".format(i, len(operators)), verbose)
+        show("Processing {}/{} operators".format(i + 1, len(operators)), verbose)
         precondition = operator.precondition
-        pre_factors_indices = _mask_to_factors(precondition.mask, factors)
-        pddl_operators = _build_pddl_operator(env, factors, operator, pre_factors_indices, vocabulary,
-                                              operator_predicates,
+        precondition_factors = _mask_to_factors(precondition.mask, factors)
+        pddl_operators = _build_pddl_operator(env, precondition_factors, operator, vocabulary,
+                                              operator_predicates, verbose=verbose,
                                               **kwargs)
         schemata.extend(pddl_operators)
     return schemata
 
 
-def _probability_in_precondition(estimators: List[Predicate], precondition: SupportVectorClassifier, verbose=False,
-                                 **kwargs) -> float:
+def _probability_in_precondition(estimators: Iterable[Proposition], precondition: SupportVectorClassifier,
+                                 allow_fill_in=False, verbose=False, **kwargs) -> float:
     """
     Draw samples from the estimators and feed to the precondition. Take the average result
     :param estimators: the list of estimators
@@ -144,11 +180,10 @@ def _probability_in_precondition(estimators: List[Predicate], precondition: Supp
     samples = samples[:, keep_indices]
 
     # if the estimators are a subset of the precondition, randomly add data to fill in
-    add_list = []
-    for m in precondition.mask:
-        if m not in mask:
-            add_list.append(m)
+    add_list = [m for m in precondition.mask if m not in mask]
     if len(add_list) > 0:
+        if not allow_fill_in:
+            return 0
         show("Must randomly fill in data from {} to intersect with precondition".format(add_list), verbose)
         raise NotImplementedError
 
@@ -184,16 +219,15 @@ def _probability_in_precondition(estimators: List[Predicate], precondition: Supp
     #     total_mask = np.concatenate((total_mask, np.array(add_list)))
 
 
-def _build_pddl_operator(env: gym.Env, factors: List[List[int]], operator: LearnedOperator,
-                         precondition_factor_indices: List[int], vocabulary: UniquePredicateList,
-                         operator_predicates: Dict[Tuple[LearnedOperator, int], List[Predicate]],
+def _build_pddl_operator(env: gym.Env, precondition_factors: List[List[int]], operator: LearnedOperator,
+                         vocabulary: UniquePredicateList,
+                         operator_predicates: Dict[Tuple[LearnedOperator, int], List[Proposition]],
                          verbose=False, **kwargs) -> List[Operator]:
     """
     Generate the PDDL representation for the given operator. There may be more than one due to disjunctive preconditions
     :param env: the domain
-    :param factors: the factorisation of the state space
+    :param factors: the factors making up the precondition
     :param operators: the learned operator
-    :param precondition_factor_indices: the indices of each factor that should be considered
     :param vocabulary: the vocabulary
     :param operator_predicates: a mapping from learned operator and probabilistic effect to the predicates in the vocab
     :param verbose: the verbosity level
@@ -204,13 +238,8 @@ def _build_pddl_operator(env: gym.Env, factors: List[List[int]], operator: Learn
     candidates = list()  # candidates are all possible propositions that we need to consider
 
     # Get all symbols whose mask matches the correct factors
-    for idx in precondition_factor_indices:
-        s_list = []
-        for predicate in vocabulary:
-            mask = factors[idx]
-            if set(predicate.mask) == set(mask):
-                s_list.append(predicate)
-        candidates.append(s_list)
+    for factor in precondition_factors:
+        candidates.append([proposition for proposition in vocabulary if set(proposition.mask) == set(factor)])
 
     high_threshold = kwargs.get('high_threshold', 0.95)
     low_threshold = kwargs.get('low_threshold', 0.1)
@@ -222,6 +251,7 @@ def _build_pddl_operator(env: gym.Env, factors: List[List[int]], operator: Learn
     # try out all possible combinations!
     combinations = list(itertools.product(*candidates))
     show("Searching through {} candidates...".format(len(combinations)), verbose)
+    found = False
     for count, candidates in enumerate(combinations):
         show("Checking candidate {}".format(count), verbose)
         if _masks_overlap(candidates):
@@ -238,9 +268,11 @@ def _build_pddl_operator(env: gym.Env, factors: List[List[int]], operator: Learn
         #     continue
 
         # probability of propositions matching classifier
-        precondition_prob = _probability_in_precondition(candidates, operator.precondition)
+        precondition_prob = _probability_in_precondition(candidates, operator.precondition, allow_fill_in)
         if precondition_prob > low_threshold:
             # we found a match!
+            found = True
+            show("\tFound a match!", verbose)
             precondition_prob = round(precondition_prob, 3)  # make look nice
             pddl_operator = Operator(operator)
             pddl_operator.add_preconditions(candidates)
@@ -248,7 +280,7 @@ def _build_pddl_operator(env: gym.Env, factors: List[List[int]], operator: Learn
             remaining_probability = 1
             if precondition_prob < high_threshold:
                 remaining_probability = precondition_prob
-                pddl_operator.add_effect(Predicate.not_failed().negate(),
+                pddl_operator.add_effect([Proposition.not_failed().negate()],
                                          1 - precondition_prob)  # add failure condition
 
             for i, (outcome_prob, effect, reward_estimator) in enumerate(operator.outcomes()):
@@ -267,10 +299,12 @@ def _build_pddl_operator(env: gym.Env, factors: List[List[int]], operator: Learn
                 negative_effects = [x.negate() for x in negative_effects]
                 pddl_operator.add_effect(positive_effects + negative_effects, prob, reward)
             pddl_operators.append(pddl_operator)
+    if not found:
+        warn("No PDDL operators found for Option {}, Partition {}".format(operator.option, operator.partition))
     return pddl_operators
 
 
-def _masks_overlap(propositions: List[Predicate]):
+def _masks_overlap(propositions: List[Proposition]):
     """
     Check if a set of propositions have overlapping masks
     :param propositions: the set of propositions
@@ -281,7 +315,7 @@ def _masks_overlap(propositions: List[Predicate]):
 
 
 def _generate_vocabulary(vocabulary: UniquePredicateList, operators: List[LearnedOperator], factors: List[List[int]],
-                         verbose=False, **kwargs) -> Dict[Tuple[LearnedOperator, int], List[Predicate]]:
+                         verbose=False, **kwargs) -> Dict[Tuple[LearnedOperator, int], List[Proposition]]:
     """
     Generate a vocabulary for the PDDL. This includes every possible proposition that could ever be required.
     :param vocabulary: the existing vocabulary of predicates
@@ -292,7 +326,7 @@ def _generate_vocabulary(vocabulary: UniquePredicateList, operators: List[Learne
     """
     # Process each option's effect sets.
     # map from (operator, probabilistic effect) -> predicates
-    operator_predicates: Dict[Tuple[LearnedOperator, int], List[Predicate]] = {}
+    operator_predicates: Dict[Tuple[LearnedOperator, int], List[Proposition]] = {}
     for operator in operators:
         for i, (_, effect, _) in enumerate(operator.outcomes()):
             predicates = list()
@@ -303,14 +337,15 @@ def _generate_vocabulary(vocabulary: UniquePredicateList, operators: List[Learne
                 predicate = vocabulary.append(effect)
                 predicates.append(predicate)
             else:
-                show('{} factors:'.format(len(factor_list)), verbose)
-                # Integrate all combinations of factors (massive explosion here!)
-                for L in range(0, len(factor_list)):
+                show('{} factors: {}'.format(len(factor_list), factor_list), verbose)
+                # TODO: I believe in theory it should be all possible combinations (i.e. N choose 1, N choose 2...), but the
+                #  original code called for generating each proposition with a single factor left out (i.e. N choose N-1).
+                #  May need to come back to this at some point
+                # for length in range(1, len(start_factors)):
+                for L in range(len(factor_list) - 1, len(factor_list)):
                     for subset in itertools.combinations(factor_list, L):
-                        new_symbol = effect
-                        for factor in subset:
-                            new_symbol = new_symbol.integrate_out(factor)
-                        predicate = vocabulary.append(effect)
+                        new_dist = effect.integrate_out(np.concatenate(subset))
+                        predicate = vocabulary.append(new_dist)
                         predicates.append(predicate)
             show('{} propositions generated'.format(len(predicates)), verbose)
             operator_predicates[(operator, i)] = predicates
@@ -327,7 +362,7 @@ def _generate_start_distribution(transition_data: pd.DataFrame, verbose=False, *
     show("Fitting estimator to initial states", verbose)
     # group by episode and get the first state from each
     initial_states = pd2np(transition_data.groupby('episode').nth(0)['state'])
-    full_mask = list(range(initial_states.shape[1]))  # all the state variables
+    full_mask = range_without(0, initial_states.shape[1])  # all the state variables
     effect = KernelDensityEstimator(full_mask)
     effect.fit(initial_states, verbose=verbose, **kwargs)
     return effect
@@ -377,47 +412,39 @@ def _factorise(operators: List[LearnedOperator], n_variables: int, verbose=True)
             factors.append([i])
             options.append(modifies[i])
 
-    show("Factors\tVariables\t\tOptions" + '\n'.join(
+    show("Factors\tVariables\t\tOptions\n" + '\n'.join(
         ["F_{}\t\t{}\t{}".format(i, factors[i], options[i]) for i in range(len(factors))]), verbose)
 
     return factors
 
 
-def _extract_factors(mask, factors):
+def _extract_factors(mask: List, factors: List) -> List[List[int]]:
     """
     Extract the factors referred to by the mask
     :param mask: the mask
     :param factors: the factors
     """
     ret = []
-    m_set = set(mask)
-    for f in factors:
-        f_set = set(f)
-        if not f_set.isdisjoint(m_set):
-            part = f_set.intersection(m_set)
-            ret.append(part)
-            m_set = m_set - f_set
+    mask_set = set(mask)
+    for factor in factors:
+        f_set = set(factor)
+        if not f_set.isdisjoint(mask_set):
+            part = list(f_set.intersection(mask_set))
+            ret.append(sorted(part))  # masks always sorted!!
+            mask_set = mask_set - f_set
 
-            if len(m_set) == 0:
+            if len(mask_set) == 0:
                 return ret
     warn("No overlapping factors in mask?!")
     return ret
 
 
-def _mask_to_factors(mask, factors):
+def _mask_to_factors(mask: List[int], factors: List[List[int]]):
     """
     Convert a mask to factors
     :param mask: the mask
     :param factors: the factors
-    :return: the index of factors referred to by the mask
+    :return: the factors referred to by the mask
     """
-    f_list = []
-    for index, f in enumerate(factors):
-        found = False
-        for m in mask:
-            if m in f:
-                found = True
-                break
-        if found:
-            f_list.append(index)
-    return f_list
+    # return factors containing at least one variable present in the mask
+    return [factor for factor in factors if not set(mask).isdisjoint(set(factor))]

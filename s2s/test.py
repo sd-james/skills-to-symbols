@@ -1,14 +1,19 @@
 import random
 
 from domain.treasure_game import TreasureGame
+from s2s.build_pddl import build_pddl
 from s2s.explore import collect_data
 from s2s.learn_operators import learn_preconditions, learn_effects, combine_learned_operators
 from s2s.partition import partition_options
-from s2s.render import visualise_partitions, save_visualised_partitions
+from s2s.pddl.domain_description import PDDLDomain
+from s2s.pddl.problem_description import PDDLProblem
+from s2s.pddl.proposition import Proposition
+from s2s.render import visualise_partitions, save_visualised_partitions, visualise_symbols
 from s2s.wrappers import MaxLength, ConditionalAction, ActionExecutable
 import numpy as np
 import pandas as pd
 from s2s.utils import save, load
+
 
 if __name__ == '__main__':
     np.random.seed(1)
@@ -38,27 +43,53 @@ if __name__ == '__main__':
     #                            option_descriptor=lambda option: env.option_names[option])
 
     #
-    # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=8,
+    # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=6,
     #                                     max_precondition_samples=10000)
     # save(preconditions, 'data/preconditions.pkl')
     preconditions = load('data/preconditions.pkl')
 
-    effects = learn_effects(env, partitions, verbose=True, n_jobs=7)
-    save(effects, 'data/effects.pkl')
+    # effects = learn_effects(env, partitions, verbose=True, n_jobs=7)
+    # save(effects, 'data/effects.pkl')
     effects = load('data/effects.pkl')
     # #
     operators = combine_learned_operators(env, partitions, preconditions, effects)
     save(operators, 'data/operators.pkl')
     #
-    # # # generate vocabulary
-    # import time
-    #
+    # # generate vocabulary
+    import time
+
     # millis = int(round(time.time() * 1000))
-    # vocabulary, operators = build_pddl(env, transition_data, operators)
+    # vocabulary, schemata = build_pddl(env, transition_data, operators, verbose=True, n_jobs=8)
     # print(len(operators))
-    # print('{} ms'.format(int(round(time.time() * 1000)) - millis))
+    # print('Building PDDL took {} ms'.format(int(round(time.time() * 1000)) - millis))
     # save(vocabulary, 'data/predicates.pkl')
-    # save(operators, 'data/operators.pkl')
-    # propositions_dir = make_path(task_dir, 'propositions')
-    # (factors, _), (option_symbols, symbol_list) = generate_symbol_vocabulary(env, propositions_dir,
-    #                                                                          operators, n_objects, init_obs)
+    # save(schemata, 'data/schemata.pkl')
+
+    vocabulary = load('data/predicates.pkl')
+    # visualise_symbols('data/vis_symbols', env, vocabulary, verbose=True, render=env.render_symbol_states)
+
+    schemata = load('data/schemata.pkl')
+
+    # pddl = PDDLDomain(env, vocabulary, schemata)
+    # save(pddl, 'data/domain.pddl', binary=False)
+    # print(pddl)
+    #
+    pddl_problem = PDDLProblem('test', env.name)
+    pddl_problem.add_start_proposition(Proposition.not_failed())
+    pddl_problem.add_goal_proposition(Proposition.not_failed())
+    pddl_problem.add_goal_proposition(vocabulary._list[-1])
+    vars = set()
+    for symbol in vocabulary:
+        mask = symbol.mask
+        if not any(m in vars for m in mask):
+            pddl_problem.add_start_proposition(symbol)
+            vars.update(mask)
+            if len(vars) == env.observation_space.shape[0]:
+                break
+    print(pddl_problem)
+
+
+
+
+
+

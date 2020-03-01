@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.metrics import silhouette_score
 
 from s2s.partitioned_option import PartitionedOption
-from s2s.utils import show, pd2np
+from s2s.utils import show, pd2np, select_rows
 from typing import List, Dict, Tuple
 
 from sklearn.cluster import DBSCAN
@@ -32,7 +32,6 @@ def partition_options(env: gym.Env, transition_data: pd.DataFrame,
     partitioned_options = dict()
     count = 0
     for option in range(env.action_space.n):
-
         show('Partitioning option {}'.format(option), verbose)
         # partition based on data from the current option
         partitioned_options[option] = _partition_option(option,
@@ -96,21 +95,18 @@ def _partition_option(option: int, data: pd.DataFrame, verbose=False, **kwargs) 
 
                 if len(np.unique(existing_shared)) > 1:
                     # split out old data
-                    reduced_cluster = existing_cluster.loc[np.where(
-                        np.logical_not(existing_shared))].reset_index(drop=True)  # the existing cluster loses some data
+                    # the existing cluster loses some data
+                    reduced_cluster = select_rows(existing_cluster, np.where(np.logical_not(existing_shared)))
                     partition_effects[i] = reduced_cluster
-                    new_clusters.append(
-                        existing_cluster.loc[np.where(existing_shared)].reset_index(
-                            drop=True))  # that data gets added to a new cluster
+                    # that data gets added to a new cluster
+                    new_clusters.append(select_rows(existing_cluster, np.where(existing_shared)))
 
                 if len(np.unique(new_shared)) > 1:
                     # split out new data
-                    new_clusters.append(
-                        cluster.loc[np.where(new_shared)].reset_index(
-                            drop=True))  # that data gets added to a new cluster
-                    cluster = cluster.loc[np.where(
-                        np.logical_not(new_shared))].reset_index(drop=True).reset_index(
-                        drop=True)  # the current cluster loses some data
+                    # that data gets added to a new cluster
+                    new_clusters.append(select_rows(cluster, np.where(new_shared)))
+                    # the current cluster loses some data
+                    cluster = select_rows(cluster, np.where(np.logical_not(new_shared)))
 
             new_clusters.append(cluster)
             partition_effects.extend(new_clusters)
@@ -143,7 +139,6 @@ def _partition_option(option: int, data: pd.DataFrame, verbose=False, **kwargs) 
     show('Total partitioned options: {}'.format(len(partitioned_options)), verbose)
 
     return partitioned_options
-
 
 
 def _merge(existing_cluster: pd.DataFrame, new_cluster: pd.DataFrame, verbose=False, **kwargs) -> Tuple[

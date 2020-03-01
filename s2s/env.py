@@ -31,16 +31,23 @@ class S2SEnv(gym.Env, ABC):
         mask = self.available_mask
         return np.random.choice(np.arange(self.action_space.n), p=mask / mask.sum())
 
-    def render_state(self, state: np.ndarray) -> np.ndarray:
+    def render_state(self, state: np.ndarray, **kwargs) -> np.ndarray:
         """
         Return an image of the given state. Where state variables are missing, specify with np.nan
         """
         nan_mask = np.where(np.isnan(state))
         state[nan_mask] = self.observation_space.sample()[nan_mask]
-        return self._render_state(state)
+        return self._render_state(state, **kwargs)
 
-    def _render_state(self, state: np.ndarray) -> np.ndarray:
+    def _render_state(self, state: np.ndarray, **kwargs) -> np.ndarray:
         """
         Return an image of the given state. There should be no missing state variables (using render_state if so)
         """
         pass
+
+    @property
+    def name(self) -> str:
+        return type(self).__name__
+
+    def describe_option(self, option: int) -> str:
+        return 'Option{}'.format(option)

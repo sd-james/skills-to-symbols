@@ -138,7 +138,7 @@ def _learn_preconditions(options: List[int], init_data: pd.DataFrame,
             precondition = _learn_precondition(partition, negative_samples, positive_samples,
                                                verbose=verbose, **kwargs)
             preconditions[(option, partition.partition)] = precondition
-            break
+
     return preconditions
 
 

@@ -61,7 +61,22 @@ class TreasureGame(S2SEnv):
         self.drawer.draw_domain()
         return pygame.surfarray.array3d(self.drawer.screen)
 
-    def _render_state(self, state: np.ndarray) -> np.ndarray:
+    def render_symbol_states(self, states: np.ndarray):
+        """
+        Special render for showing propositions
+        :param states: the states
+        """
+        if self.drawer is None:
+            self.drawer = mine_domain_drawer.drawer(self._env)
+        surface = self.drawer.draw_background_to_surface()
+        for state in states:
+            nan_mask = np.where(np.isnan(state))
+            state[nan_mask] = self.observation_space.sample()[nan_mask]
+            self._env.init_with_state(state)
+            self.drawer.blend(surface, 1.0 / states.shape[0], 0.5)
+        return pygame.surfarray.array3d(surface).swapaxes(0, 1)  # swap because pygame
+
+    def _render_state(self, state: np.ndarray, **kwargs) -> np.ndarray:
         desc = self._env.get_state_descriptors()
         self._env.playerx = int(state[desc.index("playerx")] * self._env.width)
         self._env.playery = int(state[desc.index("playery")] * self._env.height)

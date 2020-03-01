@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List
+from typing import List, Iterable
 
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KernelDensity
@@ -44,7 +44,10 @@ class KernelDensityEstimator:
         return self._mask
 
     def sample(self, n_samples=100):
-        return self._kde.sample(n_samples)
+        data = self._kde.sample(n_samples)
+        if len(data.shape) == 1:  # ensure always shape of (N X D)
+            return np.reshape(data, (data.shape[0], 1))
+        return data
 
     @staticmethod
     def _extract_remaining(a, b):
@@ -65,17 +68,20 @@ class KernelDensityEstimator:
         return np.array(new_vars), np.array(new_indices)
 
     def integrate_out(self,
-                      variable_list,
-                      **kwargs):
+                      variable_list: Iterable[int],
+                      **kwargs) -> 'KernelDensityEstimator':
         """
         Given a distribution p(s) and a list of variables, return a new
         distribution equal to p with those variables marginalized out.
         """
+
+        variable_list = sorted(variable_list) # make sure it's always sorted to prevent bugs!
+
         new_vars = list()
         new_indices = list()
 
-        for pos in range(0, len(self.mask)):
-            val = self.mask[pos]
+        # find all the other variables in the mask except what's given
+        for pos, val in enumerate(self.mask):  # TODO probably a better way of doing this in numpy
             if val not in variable_list:
                 new_vars.append(val)
                 new_indices.append(pos)

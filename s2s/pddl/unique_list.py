@@ -4,7 +4,7 @@ from s2s.estimators.kde import KernelDensityEstimator
 
 __author__ = 'Steve James and George Konidaris'
 
-from s2s.pddl.predicate import Predicate
+from s2s.pddl.proposition import Proposition
 
 
 class UniquePredicateList:
@@ -22,7 +22,7 @@ class UniquePredicateList:
         self._list = list()
         self.__idx = 0
 
-    def append(self, item: KernelDensityEstimator) -> Predicate:
+    def append(self, item: KernelDensityEstimator) -> Proposition:
         """
         Add an item to the list
         :param item: the item to add
@@ -33,7 +33,7 @@ class UniquePredicateList:
             if self._comparator(item, x):
                 return x
         idx = len(self._list)
-        predicate = Predicate('symbol_{}'.format(idx), item)
+        predicate = Proposition('symbol_{}'.format(idx), item)
         self._list.append(predicate)
         return predicate
 
@@ -41,7 +41,7 @@ class UniquePredicateList:
         self.__idx = 0
         return self
 
-    def __next__(self) -> Predicate:
+    def __next__(self) -> Proposition:
         if self.__idx < 0 or self.__idx >= len(self):
             raise StopIteration
         x = self._list[self.__idx]
