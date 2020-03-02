@@ -63,9 +63,9 @@ class SupportVectorClassifier:
         :param states: the states
         :return: the probability of the state according to the classifier
         """
+        if is_single_sample(states):
+            states = states.reshape(1, -1)
         masked_states = states[:, self.mask]
-        if is_single_sample(masked_states):
-            masked_states = masked_states.reshape(1, -1)
         if self._probabilistic:
             return np.mean(self._classifier.predict_proba(masked_states)[0][1])
         else:

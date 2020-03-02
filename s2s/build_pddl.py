@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import silhouette_score
 
+from domain.treasure_game import TreasureGame
 from s2s.estimators.svc import SupportVectorClassifier
 from s2s.learned_operator import LearnedOperator
 from s2s.estimators.kde import KernelDensityEstimator
@@ -66,6 +67,46 @@ def _close_silhouette(x: KernelDensityEstimator, y: KernelDensityEstimator) -> b
     return -threshold <= overlap <= threshold
 
 
+def _generate_goal_symbols(transition_data: pd.DataFrame, factors: List[List[int]],
+                           verbose=False, **kwargs) -> List[KernelDensityEstimator]:
+    show("Generating goal symbols...", verbose)
+
+    goal_states = pd2np(transition_data.loc[transition_data['done'] == True])  # TODO untested
+
+    return _generate_symbols(goal_states, factors, verbose=verbose, **kwargs)
+
+
+def _generate_start_symbols(transition_data: pd.DataFrame, factors: List[List[int]],
+                            verbose=False, **kwargs) -> List[KernelDensityEstimator]:
+    show("Generating start state symbols...", verbose)
+
+    # group by episode and get the first state from each
+    initial_states = pd2np(transition_data.groupby('episode').nth(0)['state'])
+    # TODO delete this. Adding because George got his saving wrong initially!
+    env = TreasureGame()
+    initial_states = np.vstack([env.reset() for _ in range(40)])
+
+    return _generate_symbols(initial_states, factors, verbose=verbose, **kwargs)
+
+
+def _generate_symbols(states: np.ndarray, factors: List[List[int]], verbose=False, **kwargs):
+    symbols = list()
+    show("Fitting estimator to states", verbose)
+
+    full_mask = range_without(0, states.shape[1])  # all the state variables
+    distribution = KernelDensityEstimator(full_mask)
+    distribution.fit(states, verbose=verbose, **kwargs)
+
+    # integrate all possible combinations of factors out of the start state distribution
+    start_factors = _extract_factors(distribution.mask, factors)
+    # we have a distribution over multiple factors. So extract each factor individually
+    for subset in itertools.combinations(start_factors, len(start_factors) - 1):
+        new_dist = distribution.integrate_out(np.concatenate(subset))
+        symbols.append(new_dist)
+
+    return symbols
+
+
 def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[LearnedOperator], verbose=False,
                **kwargs) -> Tuple[UniquePredicateList, List[Operator]]:
     """
@@ -83,37 +124,25 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     n_dims = env.observation_space.shape[-1]
     factors = _factorise(operators, n_dims, verbose=verbose)
 
-    show("Final factors:\n\n{}".format(factors), verbose)
-
-    # generate a distribution over start states
-    show("Generating start state symbols...", verbose)
-    start_distribution = _generate_start_distribution(transition_data, verbose=verbose, **kwargs)
-
-    # integrate all possible combinations of factors out of the start state distribution
-    start_factors = _extract_factors(start_distribution.mask, factors)
-
-    # TODO: I believe in theory it should be all possible combinations (i.e. N choose 1, N choose 2...), but the
-    #  original code called for generating each proposition with a single factor left out (i.e. N choose N-1).
-    #  May need to come back to this at some point
-    # for length in range(1, len(start_factors)):
-    for length in range(len(start_factors) - 1, len(start_factors)):
-        for subset in itertools.combinations(start_factors, length):
-            new_dist = start_distribution.integrate_out(np.concatenate(subset))
-            vocabulary.append(new_dist)
-
-    show("Start position generated {} propositions".format(len(vocabulary)), verbose)
-    show("Generating propositions...", verbose)
-
-    # get propositions directly from effects
-    operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
-    show("Total propositions: {}".format(len(vocabulary)), verbose)
-
-    save((vocabulary, operator_predicates))
+    # show("Final factors:\n\n{}".format(factors), verbose)
+    # #
+    # # generate a distribution over start states
+    # start_symbols = _generate_start_symbols(transition_data, factors, verbose=verbose, **kwargs)
+    # for new_dist in start_symbols:
+    #     vocabulary.append(new_dist, start_predicate=True)
+    # show("Start position generated {} propositions".format(len(vocabulary)), verbose)
+    #
+    # show("Generating propositions...", verbose)
+    # # get propositions directly from effects
+    # operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
+    # show("Total propositions: {}".format(len(vocabulary)), verbose)
+    #
+    # save((vocabulary, operator_predicates))
     vocabulary, operator_predicates = load()
     show("Generating full PDDL...", verbose)
 
-    n_jobs = kwargs.get('n_jobs', 1)  # n_procs = multiprocessing.cpu_count()
-    # do it in parallel!  # TODO VERIFY NO ISSUES!
+    n_jobs = kwargs.get('n_jobs', 1)
+    # do it in parallel!
     show("Running on {} CPUs".format(n_jobs), verbose)
     splits = np.array_split(operators, n_jobs)
     functions = [
@@ -165,7 +194,8 @@ def _probability_in_precondition(estimators: Iterable[Proposition], precondition
     for predicate in estimators:
         mask.extend(predicate.mask)
 
-    if not set(mask).issuperset(set(precondition.mask)):
+    # if we are not allowed to randomly sample, and we are missing state variables, then return 0
+    if not allow_fill_in and not set(mask).issuperset(set(precondition.mask)):
         return 0
 
     keep_indices = [i for i in range(len(mask)) if mask[i] in precondition.mask]
@@ -338,33 +368,29 @@ def _generate_vocabulary(vocabulary: UniquePredicateList, operators: List[Learne
                 predicates.append(predicate)
             else:
                 show('{} factors: {}'.format(len(factor_list), factor_list), verbose)
-                # TODO: I believe in theory it should be all possible combinations (i.e. N choose 1, N choose 2...), but the
-                #  original code called for generating each proposition with a single factor left out (i.e. N choose N-1).
-                #  May need to come back to this at some point
-                # for length in range(1, len(start_factors)):
-                for L in range(len(factor_list) - 1, len(factor_list)):
-                    for subset in itertools.combinations(factor_list, L):
-                        new_dist = effect.integrate_out(np.concatenate(subset))
-                        predicate = vocabulary.append(new_dist)
-                        predicates.append(predicate)
+
+                # we have a distribution over multiple factors. So extract each factor individually
+                for subset in itertools.combinations(factor_list, len(factor_list) - 1):
+                    # subset is every subset of factors (but one)
+                    new_dist = effect.integrate_out(np.concatenate(subset))
+                    predicate = vocabulary.append(new_dist)
+                    predicates.append(predicate)
             show('{} propositions generated'.format(len(predicates)), verbose)
             operator_predicates[(operator, i)] = predicates
     return operator_predicates
 
 
-def _generate_start_distribution(transition_data: pd.DataFrame, verbose=False, **kwargs) -> KernelDensityEstimator:
+def _generate_state_distribution(states: np.ndarray, verbose=False, **kwargs) -> KernelDensityEstimator:
     """
-    Generate a distribution over the starting states
-    :param transition_data: the transition data from which we can extract the initial states
+    Generate a distribution over a set of states
+    :param states: the states
     :param verbose: the verbosity level
-    :return: a density estimation of the initial states
+    :return: a density estimation of the states
     """
-    show("Fitting estimator to initial states", verbose)
-    # group by episode and get the first state from each
-    initial_states = pd2np(transition_data.groupby('episode').nth(0)['state'])
-    full_mask = range_without(0, initial_states.shape[1])  # all the state variables
+    show("Fitting estimator to states", verbose)
+    full_mask = range_without(0, states.shape[1])  # all the state variables
     effect = KernelDensityEstimator(full_mask)
-    effect.fit(initial_states, verbose=verbose, **kwargs)
+    effect.fit(states, verbose=verbose, **kwargs)
     return effect
 
 

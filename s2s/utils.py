@@ -20,6 +20,7 @@ def indent(x: Any, count: int = 1) -> str:
     """
     return textwrap.indent(str(x), '\t' * count)
 
+
 def select_rows(data: pd.DataFrame, indices: Iterable, reset_index=True) -> pd.DataFrame:
     """
     Select a set of rows from a data frame

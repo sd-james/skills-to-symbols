@@ -80,7 +80,7 @@ class PrettyPrint:
                 end = None
                 if self._use_rewards and reward is not None:
                     end = '{} (reward) {:.2f}'.format('increase' if reward >= 0 else 'decrease', abs(reward))
-                effect += indent('\n\t{} {}'.format(prob, self._propositions_to_str(eff, end)), 3)
+                effect += indent('\n\t{} ({})'.format(prob, self._propositions_to_str(eff, end)), 3)
             effect += '\n\t\t\t)\n\t'
 
         if self._option_descriptor is None:

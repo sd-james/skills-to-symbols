@@ -87,8 +87,11 @@ def _collect_data(env: gym.Env, seed=None, max_timestep=np.inf, max_episode=np.i
                 n_timesteps += 1
                 mask = np.where(np.array(state) != np.array(next_state))[0]  # check which indices are not equal!
                 next_options = info.get('next_actions', np.array([]))
+
+                # the max length wrapper might set it to done and we have not succeeded
+                success = done and not info.get('TimeLimit.truncated', False)
                 transition_data.loc[len(transition_data)] = [n_episode + episode_offset, state, action,
-                                                             reward, next_state, done, mask,
+                                                             reward, next_state, success, mask,
                                                              next_options]
                 ep_timestep += 1
             if 'current_actions' in info:

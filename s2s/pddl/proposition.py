@@ -13,6 +13,9 @@ class Proposition:
         self._kde = kde
         self.sign = 1  # whether true or the negation of the predicate
 
+    def estimator(self) -> KernelDensityEstimator:
+        return self._kde
+
     @property
     def name(self) -> str:
         return self._name

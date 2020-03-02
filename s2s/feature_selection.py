@@ -32,7 +32,8 @@ def _compute_precondition_mask(positive_samples: np.ndarray, negative_samples: n
     total_score, params = _get_orig_score_params(samples, labels, **kwargs)
     show("Score with all variables: {}".format(total_score), verbose)
 
-    threshold = kwargs.get('mask_selection_threshold', 0.02)
+    threshold = kwargs.get('mask_removal_threshold', 0.02)
+
 
     # try remove each state variable in turn, see what the score is
     for m in range(n_vars):
@@ -47,6 +48,8 @@ def _compute_precondition_mask(positive_samples: np.ndarray, negative_samples: n
     # if no mask, just find the best one so far
     if len(mask) == 0:
         mask.append(np.argmax([_get_subset_score(samples, labels, [i], params) for i in range(n_vars)]))
+
+    threshold = kwargs.get('mask_addition_threshold', 0.001)
 
     latest_score = _get_subset_score(samples, labels, mask, params)
     # now try adding variables back!

@@ -15,8 +15,8 @@ class PDDLDomain:
         self._env = env
         self._vocabulary = vocabulary
         self._operators = operators
-        self._probabilistic = kwargs.get('probabilistic', False)
-        self._rewards = kwargs.get('rewards', False)
+        self._probabilistic = kwargs.get('probabilistic', True)
+        self._rewards = kwargs.get('rewards', True)
 
     def __str__(self):
         comment = ';Automatically generated {} domain PPDDL file.'.format(self._env.name)

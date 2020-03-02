@@ -204,7 +204,7 @@ def _resample(positive_samples: np.ndarray, negative_samples: np.ndarray, max_sa
     n_samples = len(negative_samples) + len(positive_samples)
     if n_samples > max_samples:
 
-        if len(positive_samples) < 10:
+        if len(positive_samples) < 100:
             # very little data. Don't lose it!
             n_positive = len(positive_samples)
             n_negative = max_samples - n_positive
