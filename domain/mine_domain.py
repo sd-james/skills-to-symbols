@@ -391,8 +391,8 @@ class mine_domain:
                 return
 
     def get_player_cell(self):
-        xc = int(self.playerx / xscale)
-        yc = int((self.playery + (yscale / 2)) / yscale)
+        xc = int(self.playerx // xscale)
+        yc = int((self.playery + (yscale // 2)) // yscale)
 
         return (xc, yc)
 

@@ -6,12 +6,13 @@ import gym
 import numpy as np
 import pandas as pd
 
+from s2s.env import S2SWrapper
 from s2s.utils import show, run_parallel
 
 __author__ = 'Steve James and George Konidaris'
 
 
-def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=False, seed=None, n_jobs=1,
+def collect_data(env: S2SWrapper, max_timestep=np.inf, max_episode=np.inf, verbose=False, seed=None, n_jobs=1,
                  **kwargs) -> (
         pd.DataFrame, pd.DataFrame):
     """
@@ -50,7 +51,7 @@ def collect_data(env: gym.Env, max_timestep=np.inf, max_episode=np.inf, verbose=
     return transition_data, initiation_data
 
 
-def _collect_data(env: gym.Env, seed=None, max_timestep=np.inf, max_episode=np.inf, verbose=False,
+def _collect_data(env: S2SWrapper, seed=None, max_timestep=np.inf, max_episode=np.inf, verbose=False,
                   episode_offset=0) -> (
         pd.DataFrame, pd.DataFrame):
     """
@@ -89,7 +90,7 @@ def _collect_data(env: gym.Env, seed=None, max_timestep=np.inf, max_episode=np.i
                 next_options = info.get('next_actions', np.array([]))
 
                 # the max length wrapper might set it to done and we have not succeeded
-                success = done and not info.get('TimeLimit.truncated', False)
+                success = done and info.get('goal_achieved', False)
                 transition_data.loc[len(transition_data)] = [n_episode + episode_offset, state, action,
                                                              reward, next_state, success, mask,
                                                              next_options]

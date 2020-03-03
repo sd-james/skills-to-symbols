@@ -1,7 +1,5 @@
 import gym
 
-from s2s.env import S2SEnv
-
 
 class MaxLength(gym.Wrapper):
     """
@@ -38,7 +36,7 @@ class ConditionalAction(gym.Wrapper):
     Wrapper to deal with the case of actions not being valid. The environment must provide a function called can_execute
     """
 
-    def __init__(self, env: S2SEnv):
+    def __init__(self, env: gym.Env):
         super().__init__(env)
 
     def step(self, action):

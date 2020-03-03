@@ -124,20 +124,20 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     n_dims = env.observation_space.shape[-1]
     factors = _factorise(operators, n_dims, verbose=verbose)
 
-    # show("Final factors:\n\n{}".format(factors), verbose)
-    # #
-    # # generate a distribution over start states
-    # start_symbols = _generate_start_symbols(transition_data, factors, verbose=verbose, **kwargs)
-    # for new_dist in start_symbols:
-    #     vocabulary.append(new_dist, start_predicate=True)
-    # show("Start position generated {} propositions".format(len(vocabulary)), verbose)
+    show("Final factors:\n\n{}".format(factors), verbose)
     #
-    # show("Generating propositions...", verbose)
-    # # get propositions directly from effects
-    # operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
-    # show("Total propositions: {}".format(len(vocabulary)), verbose)
-    #
-    # save((vocabulary, operator_predicates))
+    # generate a distribution over start states
+    start_symbols = _generate_start_symbols(transition_data, factors, verbose=verbose, **kwargs)
+    for new_dist in start_symbols:
+        vocabulary.append(new_dist, start_predicate=True)
+    show("Start position generated {} propositions".format(len(vocabulary)), verbose)
+
+    show("Generating propositions...", verbose)
+    # get propositions directly from effects
+    operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
+    show("Total propositions: {}".format(len(vocabulary)), verbose)
+
+    save((vocabulary, operator_predicates))
     vocabulary, operator_predicates = load()
     show("Generating full PDDL...", verbose)
 

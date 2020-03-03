@@ -2,6 +2,23 @@ from abc import ABC, abstractmethod
 import numpy as np
 import gym
 
+from s2s.wrappers import ConditionalAction, MaxLength, ActionExecutable
+
+
+class S2SWrapper(gym.Wrapper):
+
+    def __init__(self, env: 'S2SEnv', options_per_episode=np.inf):
+        env = ConditionalAction(env)  # support actions that are not executable everywhere
+        env = MaxLength(env, options_per_episode)  # restrict episode lengths
+        env = ActionExecutable(env)  # determine at each state which actions/options are executable
+        super().__init__(env)
+
+    def step(self, action):
+        state, reward, done, info = super().step(action)
+        if done and not info.get('TimeLimit.truncated', False):
+            info['goal_achieved'] = True
+        return state, reward, done, info
+
 
 class S2SEnv(gym.Env, ABC):
     """
