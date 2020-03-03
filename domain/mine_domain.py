@@ -39,6 +39,7 @@ class mine_domain:
         self.jump_ticker = 0
         self.player_width = xscale // 2
         self.player_height = yscale
+        self.facing_right = True
 
         self.total_actions = 0
 
@@ -275,10 +276,12 @@ class mine_domain:
         elif (action == ACTION_LEFT):
             if (self.can_go_left()):
                 xdelta = self.noisy(-self.x_incr)
+                self.facing_right = False
 
         elif (action == ACTION_RIGHT):
             if (self.can_go_right()):
                 xdelta = self.noisy(self.x_incr)
+                self.facing_right = True
 
         elif (action == ACTION_JUMP):
             if ((not self.can_go_down()) and (self.up_clear())):
@@ -398,7 +401,7 @@ class mine_domain:
 
     def init_with_state(self, state):
         desc = self.get_state_descriptors()
-
+        self.facing_right = True
         # Fill in the blanks
         st = self.get_state()
         for v in range(0, len(st)):

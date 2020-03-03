@@ -87,9 +87,13 @@ def _learn_effects(options: List[int], partitioned_options: Dict[int, List[Parti
                 show("Fitting effect estimator", verbose)
                 effect = KernelDensityEstimator(mask)
                 effect.fit(next_states, verbose=verbose, **kwargs)  # compute the effect
-                show("Fitting reward estimator", verbose)
-                reward_estimator = SupportVectorRegressor()
-                reward_estimator.fit(states, rewards, verbose=verbose, **kwargs)  # estimate the reward
+
+                if kwargs.get('specify_rewards', True):
+                    show("Fitting reward estimator", verbose)
+                    reward_estimator = SupportVectorRegressor()
+                    reward_estimator.fit(states, rewards, verbose=verbose, **kwargs)  # estimate the reward
+                else:
+                    reward_estimator = None
                 probabilistic_outcomes.append((prob, effect, reward_estimator))
             effects[(option, partition.partition)] = probabilistic_outcomes
 

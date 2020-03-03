@@ -27,10 +27,10 @@ if __name__ == '__main__':
 
     millis = int(round(time.time() * 1000))
 
-    # transition_data, initiation_data = collect_data(S2SWrapper(env, 1000), max_episode=n_episodes, verbose=True,
-    #                                                 n_jobs=8)
-    # transition_data.to_pickle('full_run/transition.pkl', compression='gzip')
-    # initiation_data.to_pickle('full_run/init.pkl', compression='gzip')
+    transition_data, initiation_data = collect_data(S2SWrapper(env, 1000), max_episode=n_episodes, verbose=True,
+                                                    n_jobs=1)
+    transition_data.to_pickle('full_run/transition.pkl', compression='gzip')
+    initiation_data.to_pickle('full_run/init.pkl', compression='gzip')
 
     transition_data = pd.read_pickle('full_run/orig_data.pkl', compression='gzip')
     initiation_data = pd.read_pickle('full_run/orig_init_data.pkl', compression='gzip')
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     save(preconditions, 'full_run/preconditions.pkl')
     preconditions = load('full_run/preconditions.pkl')
 
-    effects = learn_effects(env, partitions, verbose=True, n_jobs=8)
+    effects = learn_effects(env, partitions, verbose=True, n_jobs=8, specify_rewards=False)
     save(effects, 'full_run/effects.pkl')
     effects = load('full_run/effects.pkl')
     operators = combine_learned_operators(env, partitions, preconditions, effects)
