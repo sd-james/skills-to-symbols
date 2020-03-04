@@ -6,12 +6,13 @@ from s2s.env import S2SEnv
 from s2s.pddl import operator
 from s2s.pddl.operator import Operator, PrettyPrint
 from s2s.pddl.proposition import Proposition
+from s2s.pddl.unique_list import UniquePredicateList
 from s2s.utils import indent
 
 
 class PDDLDomain:
 
-    def __init__(self, env: S2SEnv, vocabulary: List[Proposition], operators: Iterable[Operator], **kwargs):
+    def __init__(self, env: S2SEnv, vocabulary: UniquePredicateList, operators: Iterable[Operator], **kwargs):
         self._env = env
         self._vocabulary = vocabulary
         self._operators = operators

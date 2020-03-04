@@ -66,3 +66,7 @@ class UniquePredicateList:
     @property
     def start_predicates(self):
         return self._start_predicates
+
+    @property
+    def goal_predicates(self):
+        return self._goal_predicates

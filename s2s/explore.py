@@ -91,6 +91,10 @@ def _collect_data(env: S2SWrapper, seed=None, max_timestep=np.inf, max_episode=n
 
                 # the max length wrapper might set it to done and we have not succeeded
                 success = done and info.get('goal_achieved', False)
+
+                if success:
+                    done = False  # we're going to keep going until we run out of time!
+
                 transition_data.loc[len(transition_data)] = [n_episode + episode_offset, state, action,
                                                              reward, next_state, success, mask,
                                                              next_options]

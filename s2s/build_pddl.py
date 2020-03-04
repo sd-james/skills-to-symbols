@@ -70,9 +70,7 @@ def _close_silhouette(x: KernelDensityEstimator, y: KernelDensityEstimator) -> b
 def _generate_goal_symbols(transition_data: pd.DataFrame, factors: List[List[int]],
                            verbose=False, **kwargs) -> List[KernelDensityEstimator]:
     show("Generating goal symbols...", verbose)
-
-    goal_states = pd2np(transition_data.loc[transition_data['done'] == True])  # TODO untested
-
+    goal_states = pd2np(transition_data.loc[transition_data['done'] == True]['next_state'])
     return _generate_symbols(goal_states, factors, verbose=verbose, **kwargs)
 
 
@@ -82,14 +80,11 @@ def _generate_start_symbols(transition_data: pd.DataFrame, factors: List[List[in
 
     # group by episode and get the first state from each
     initial_states = pd2np(transition_data.groupby('episode').nth(0)['state'])
-    # TODO delete this. Adding because George got his saving wrong initially!
-    env = TreasureGame()
-    initial_states = np.vstack([env.reset() for _ in range(40)])
 
     return _generate_symbols(initial_states, factors, verbose=verbose, **kwargs)
 
 
-def _generate_symbols(states: np.ndarray, factors: List[List[int]], verbose=False, **kwargs):
+def _generate_symbols(states: np.ndarray, total_factors: List[List[int]], verbose=False, **kwargs):
     symbols = list()
     show("Fitting estimator to states", verbose)
 
@@ -97,10 +92,10 @@ def _generate_symbols(states: np.ndarray, factors: List[List[int]], verbose=Fals
     distribution = KernelDensityEstimator(full_mask)
     distribution.fit(states, verbose=verbose, **kwargs)
 
-    # integrate all possible combinations of factors out of the start state distribution
-    start_factors = _extract_factors(distribution.mask, factors)
+    # integrate all possible combinations of factors out of the state distribution
+    factors = _extract_factors(distribution.mask, total_factors)
     # we have a distribution over multiple factors. So extract each factor individually
-    for subset in itertools.combinations(start_factors, len(start_factors) - 1):
+    for subset in itertools.combinations(factors, len(factors) - 1):
         new_dist = distribution.integrate_out(np.concatenate(subset))
         symbols.append(new_dist)
 
@@ -127,18 +122,25 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     show("Final factors:\n\n{}".format(factors), verbose)
     #
     # generate a distribution over start states
-    start_symbols = _generate_start_symbols(transition_data, factors, verbose=verbose, **kwargs)
-    for new_dist in start_symbols:
+    goal_symbols = _generate_start_symbols(transition_data, factors, verbose=verbose, **kwargs)
+    for new_dist in goal_symbols:
         vocabulary.append(new_dist, start_predicate=True)
-    show("Start position generated {} propositions".format(len(vocabulary)), verbose)
+
+    n_start_propositions = len(vocabulary)
+    show("Start position generated {} propositions".format(n_start_propositions), verbose)
+
+    # TODO: leaving this out for now
+    # # generate a distribution over goal states
+    # goal_symbols = _generate_goal_symbols(transition_data, factors, verbose=verbose, **kwargs)
+    # for new_dist in goal_symbols:
+    #     vocabulary.append(new_dist, goal_predicate=True)
+    # show("Goal condition generated {} propositions".format(len(vocabulary) - n_start_propositions), verbose)
 
     show("Generating propositions...", verbose)
     # get propositions directly from effects
     operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
     show("Total propositions: {}".format(len(vocabulary)), verbose)
 
-    save((vocabulary, operator_predicates))
-    vocabulary, operator_predicates = load()
     show("Generating full PDDL...", verbose)
 
     n_jobs = kwargs.get('n_jobs', 1)
@@ -225,28 +227,6 @@ def _probability_in_precondition(estimators: Iterable[Proposition], precondition
         t_point[total_mask] = point
         s_prob += precondition.probability(t_point)
     return s_prob / n_samples
-
-    # add_list = []
-    # for m in conditional_symbol.mask:
-    #     if m not in self._mask:
-    #         add_list.append(m)
-    #
-    # total_mask = self._mask[keep_indices]
-    #
-    # if len(add_list) > 0:
-    #
-    #     if not allow_fill_in:
-    #         # not allowed to fill in data (e.g. ames et al)
-    #         return 0
-    #     if fill_in is not None:
-    #         uniform = np.array([list(fill_in[add_list])] * self._mc_samples)
-    #     else:
-    #         uniform = np.random.uniform(0.0, 1.0, size=[self._mc_samples, len(add_list)])
-    #     mc_new = np.zeros([self._mc_samples, len(keep_indices) + len(add_list)])
-    #     mc_new[:, 0:len(keep_indices)] = mc_samples
-    #     mc_new[:, len(keep_indices):] = uniform
-    #     mc_samples = mc_new
-    #     total_mask = np.concatenate((total_mask, np.array(add_list)))
 
 
 def _build_pddl_operator(env: gym.Env, precondition_factors: List[List[int]], operator: LearnedOperator,

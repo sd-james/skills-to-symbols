@@ -27,39 +27,46 @@ if __name__ == '__main__':
 
     millis = int(round(time.time() * 1000))
 
-    transition_data, initiation_data = collect_data(S2SWrapper(env, 1000), max_episode=n_episodes, verbose=True,
-                                                    n_jobs=1)
-    transition_data.to_pickle('full_run/transition.pkl', compression='gzip')
-    initiation_data.to_pickle('full_run/init.pkl', compression='gzip')
+    # transition_data, initiation_data = collect_data(S2SWrapper(env, 1000), max_episode=n_episodes, verbose=True,
+    #                                                 n_jobs=8)
+    # transition_data.to_pickle('full_run/transition.pkl', compression='gzip')
+    # initiation_data.to_pickle('full_run/init.pkl', compression='gzip')
 
-    transition_data = pd.read_pickle('full_run/orig_data.pkl', compression='gzip')
-    initiation_data = pd.read_pickle('full_run/orig_init_data.pkl', compression='gzip')
+    print('\n\nTime to collect took {} ms'.format(int(round(time.time() * 1000)) - millis))
 
-    partitions = partition_options(env, transition_data, verbose=True)
-    save(partitions, 'full_run/partitions.pkl')
+    transition_data = pd.read_pickle('full_run/transition.pkl', compression='gzip')
+    initiation_data = pd.read_pickle('full_run/init.pkl', compression='gzip')
+
+    # partitions = partition_options(env, transition_data, verbose=True)
+    # save(partitions, 'full_run/partitions.pkl')
+
     partitions = load('full_run/partitions.pkl')
 
     # TODO: Fix slow :(
-    # vis_partitions = visualise_partitions(env, partitions, verbose=True)
-    # save_visualised_partitions('full_run/vis_partitions', vis_partitions, verbose=True,
-    #                            option_descriptor=lambda option: env.option_names[option])
+    visualise_partitions('full_run/vis_partitions', env, partitions, verbose=True,
+                                          option_descriptor=lambda option: env.option_names[option])
+
 
     #
-    preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=8,
-                                        max_precondition_samples=10000)
-    save(preconditions, 'full_run/preconditions.pkl')
+    # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=8,
+    #                                     max_precondition_samples=10000)
+    # save(preconditions, 'full_run/preconditions.pkl')
+
     preconditions = load('full_run/preconditions.pkl')
 
-    effects = learn_effects(env, partitions, verbose=True, n_jobs=8, specify_rewards=False)
-    save(effects, 'full_run/effects.pkl')
+    # effects = learn_effects(env, partitions, verbose=True, n_jobs=8, specify_rewards=False)
+    # save(effects, 'full_run/effects.pkl')
+
     effects = load('full_run/effects.pkl')
-    operators = combine_learned_operators(env, partitions, preconditions, effects)
-    save(operators, 'full_run/operators.pkl')
+    # operators = combine_learned_operators(env, partitions, preconditions, effects)
+    # save(operators, 'full_run/operators.pkl')
+
+    operators = load('full_run/operators.pkl')
 
     # generate vocabulary
     vocabulary, schemata = build_pddl(env, transition_data, operators, verbose=True, n_jobs=8)
-    print(len(operators))
 
+    #
     save(vocabulary, 'full_run/predicates.pkl')
     save(schemata, 'full_run/schemata.pkl')
 
@@ -77,8 +84,13 @@ if __name__ == '__main__':
     pddl_problem.add_start_proposition(Proposition.not_failed())
     for prop in vocabulary.start_predicates:
         pddl_problem.add_start_proposition(prop)
+
     pddl_problem.add_goal_proposition(Proposition.not_failed())
-    pddl_problem.add_goal_proposition(vocabulary._list[-1])
+    for prop in vocabulary.goal_predicates:
+        pddl_problem.add_goal_proposition(prop)
+
     print(pddl_problem)
+
+    save(pddl_problem, 'full_run/problem.pddl', binary=False)
 
     print('\n\nBuilding PDDL took {} ms'.format(int(round(time.time() * 1000)) - millis))
