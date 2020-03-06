@@ -9,7 +9,7 @@ import numpy as np
 import pickle
 import textwrap
 
-__author__ = 'Steve James'
+__author__ = 'Steve James and George Konidaris'
 
 
 def indent(x: Any, count: int = 1) -> str:

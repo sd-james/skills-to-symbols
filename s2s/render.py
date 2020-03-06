@@ -1,13 +1,12 @@
-from collections import defaultdict
-from typing import List, Dict, Tuple, Iterable
+from typing import List, Dict, Iterable
 
 import numpy as np
 
-from s2s.env import S2SEnv
+from s2s.env.s2s_env import S2SEnv
 from s2s.image import Image
 from s2s.partitioned_option import PartitionedOption
 from s2s.pddl.proposition import Proposition
-from s2s.utils import show, exists, make_dir, make_path
+from s2s.utils import show, make_dir, make_path
 
 
 def visualise_symbols(directory: str, env: S2SEnv, symbols: Iterable[Proposition], verbose=False, **kwargs) -> None:
@@ -58,7 +57,7 @@ def visualise_partitions(directory: str,
 
             effects = list()
             for probability, states, _, next_states, mask, in partition.effects():
-                start = env.render_states(states)
+                start = env.render_states(states, alpha_object=1, alpha_player=1)
                 end = env.render_states(next_states)
                 effects.append((probability, start, mask, end))
             show("Visualising option {}, partition {}".format(option, partition.partition), verbose)

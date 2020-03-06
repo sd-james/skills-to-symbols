@@ -475,7 +475,7 @@ if __name__ == "__main__":
 
     pygame.init()
     env = _TreasureGameImpl('domain.txt', 'domain-objects.txt', 'domain-interactions.txt')
-    drawer = _treasure_game_drawer._TreasureGameDrawer(env)
+    drawer = _treasure_game_drawer._TreasureGameDrawer(env, display_screen=True)
 
     clock = pygame.time.Clock()
     pygame.key.set_repeat()

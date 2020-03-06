@@ -48,12 +48,13 @@ class ConditionalAction(gym.Wrapper):
 
 class ActionExecutable(gym.Wrapper):
     """
-    Wrapper that adds information about which actions are available at the current and next state. Each is given as a binary vector
+    Wrapper that adds information about which actions are available at the current and next state. Each is given as a
+    binary vector
     """
+
     def step(self, action):
         current_actions = self.env.available_mask
         observation, reward, done, info = self.env.step(action)
         info['current_actions'] = current_actions
         info['next_actions'] = self.env.available_mask
         return observation, reward, done, info
-

@@ -1,9 +1,6 @@
-from typing import Iterable, List, Any
+from typing import Iterable
 
-import gym
-
-from s2s.env import S2SEnv
-from s2s.pddl import operator
+from s2s.env.s2s_env import S2SEnv
 from s2s.pddl.operator import Operator, PrettyPrint
 from s2s.pddl.proposition import Proposition
 from s2s.pddl.unique_list import UniquePredicateList

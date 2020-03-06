@@ -76,11 +76,16 @@ class TreasureGame(S2SEnv):
         if self.drawer is None:
             self.drawer = _TreasureGameDrawer(self._env)
         surface = self.drawer.draw_background_to_surface()
+
+        alpha_objects = kwargs.get('alpha_object', 1.0 / states.shape[0])
+        alpha_player = kwargs.get('alpha_player', 0.5)
+
         for state in states:
             nan_mask = np.where(np.isnan(state))
             state[nan_mask] = self.observation_space.sample()[nan_mask]
             self._env.init_with_state(state)
-            self.drawer.blend(surface, 1.0 / states.shape[0], 0.5)
+
+            self.drawer.blend(surface, alpha_objects, alpha_player)
         return pygame.surfarray.array3d(surface).swapaxes(0, 1)  # swap because pygame
 
     def _render_state(self, state: np.ndarray, **kwargs) -> np.ndarray:

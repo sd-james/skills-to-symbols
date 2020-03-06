@@ -11,7 +11,6 @@ from collections import defaultdict
 import pygame
 from pygame.locals import *
 
-
 import os
 
 from s2s.env.treasure_game._treasure_game_impl._cell_types import WALL, LADDER, OPEN_SPACE
@@ -37,13 +36,17 @@ FLOOR_SPRITE = 12
 
 class _TreasureGameDrawer:
 
-    def __init__(self, md):
+    def __init__(self, md, display_screen=False):
 
-
-        pygame.display.set_mode((1, 1))
         self.md = md
-        self.screen = pygame.Surface((self.md.width, self.md.height)).convert()  # we'll use gym to render. So just use a surface as the screen!
-        # self.screen = pygame.display.set_mode((self.md.width, self.md.height), DOUBLEBUF)
+
+        if display_screen:
+            self.screen = pygame.display.set_mode((self.md.width, self.md.height), DOUBLEBUF)
+        else:
+            pygame.display.set_mode((1, 1))
+            self.screen = pygame.Surface((self.md.width,
+                                          self.md.height)).convert()  # we'll use gym to render. So just use a surface as the screen!
+        #
 
         self.images = self.load_sprites()
         self.random_generator = random.Random()
@@ -154,7 +157,8 @@ class _TreasureGameDrawer:
         if self.md.facing_right:
             self.screen.blit(self.images[HERO_SPRITE], (self.md.playerx - xscale / 2, self.md.playery))
         else:
-            self.screen.blit(pygame.transform.flip(self.images[HERO_SPRITE], True, False), (self.md.playerx - xscale / 2, self.md.playery))
+            self.screen.blit(pygame.transform.flip(self.images[HERO_SPRITE], True, False),
+                             (self.md.playerx - xscale / 2, self.md.playery))
         if show_screen:
             pygame.display.flip()
 
@@ -187,7 +191,8 @@ class _TreasureGameDrawer:
         if self.md.facing_right:
             draw_surf.blit(self.images[HERO_SPRITE], (self.md.playerx - xscale / 2, self.md.playery))
         else:
-            draw_surf.blit(pygame.transform.flip(self.images[HERO_SPRITE], True, False), (self.md.playerx - xscale / 2, self.md.playery))
+            draw_surf.blit(pygame.transform.flip(self.images[HERO_SPRITE], True, False),
+                           (self.md.playerx - xscale / 2, self.md.playery))
         return draw_surf
 
     def blit_alpha(self, target, source, location, opacity):
@@ -221,7 +226,8 @@ class _TreasureGameDrawer:
             self.blit_alpha(surf, self.images[HERO_SPRITE], (self.md.playerx - xscale / 2, self.md.playery),
                             int(255 * alpha_player))
         else:
-            self.blit_alpha(surf, pygame.transform.flip(self.images[HERO_SPRITE], True, False), (self.md.playerx - xscale / 2, self.md.playery),
+            self.blit_alpha(surf, pygame.transform.flip(self.images[HERO_SPRITE], True, False),
+                            (self.md.playerx - xscale / 2, self.md.playery),
                             int(255 * alpha_player))
 
     def draw_to_file(self, fname):

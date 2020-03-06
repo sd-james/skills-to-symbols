@@ -5,6 +5,8 @@ from s2s.estimators.svc import SupportVectorClassifier
 from s2s.estimators.svr import SupportVectorRegressor
 from s2s.partitioned_option import PartitionedOption
 
+__author__ = 'Steve James and George Konidaris'
+
 
 class LearnedOperator:
     """
