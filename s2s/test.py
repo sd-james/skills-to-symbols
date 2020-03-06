@@ -4,7 +4,6 @@ import time
 import numpy as np
 import pandas as pd
 
-from domain.treasure_game import TreasureGame
 from s2s.build_pddl import build_pddl
 from s2s.learn_operators import learn_effects, combine_learned_operators, learn_preconditions
 from s2s.pddl.domain_description import PDDLDomain
@@ -39,8 +38,10 @@ if __name__ == '__main__':
     partitions = load('full_run/partitions.pkl')
 
     # TODO: Fix slow :(
-    # visualise_partitions('full_run/vis_partitions', env, partitions, verbose=True,
-    #                                       option_descriptor=lambda option: env.option_names[option])
+    visualise_partitions('full_run/vis_partitions', env, partitions, verbose=True,
+                                          option_descriptor=lambda option: env.option_names[option])
+
+    exit(0)
 
     preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=8,
                                         max_precondition_samples=10000)

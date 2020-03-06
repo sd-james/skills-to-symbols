@@ -49,6 +49,7 @@ def visualise_partitions(directory: str,
     """
     option_descriptor = kwargs.get('option_descriptor',
                                    lambda option: 'Option-{}'.format(option))  # a function that describes the operator
+    make_dir(directory)
     for option, partitions in option_partitions.items():
 
         show("Visualising option {} with {} partition(s)".format(option, len(partitions)), verbose)
@@ -57,13 +58,13 @@ def visualise_partitions(directory: str,
 
             effects = list()
             for probability, states, _, next_states, mask, in partition.effects():
-                start = Image.merge([env.render_state(state) for state in states])
-                end = Image.merge([env.render_state(state) for state in next_states])
+                start = env.render_states(states)
+                end = env.render_states(next_states)
                 effects.append((probability, start, mask, end))
-            show("Visualising option {}, partition {}".format(option, partition), verbose)
+            show("Visualising option {}, partition {}".format(option, partition.partition), verbose)
             for i, (probability, start, masks, effect) in enumerate(effects):
-                filename = '{}-{}-init.bmp'.format(option_descriptor(option), partition)
+                filename = '{}-{}-init.bmp'.format(option_descriptor(option), partition.partition)
                 Image.save(start, make_path(directory, filename), mode='RGB')
-                filename = '{}-{}-eff-{}-{}-{}.bmp'.format(option_descriptor(option), partition, i,
+                filename = '{}-{}-eff-{}-{}-{}.bmp'.format(option_descriptor(option), partition.partition, i,
                                                            round(probability * 100), list(np.unique(masks)))
                 Image.save(effect, make_path(directory, filename), mode='RGB')

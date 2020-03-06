@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import gym
 
+from s2s.image import Image
 from s2s.wrappers import ConditionalAction, MaxLength, ActionExecutable
 
 
@@ -47,6 +48,13 @@ class S2SEnv(gym.Env, ABC):
             return self.action_space.sample()
         mask = self.available_mask
         return np.random.choice(np.arange(self.action_space.n), p=mask / mask.sum())
+
+    def render_states(self, states: np.ndarray, **kwargs) -> np.ndarray:
+        """
+        Return an image for the given states. This method can be overriden to optimise for the fact that there are
+         multiple states. If not, it will simply average the results of render_state for each state
+        """
+        return Image.merge([self.render_state(state) for state in states])
 
     def render_state(self, state: np.ndarray, **kwargs) -> np.ndarray:
         """
