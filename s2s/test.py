@@ -14,7 +14,7 @@ from s2s.pddl.domain_description import PDDLDomain
 from s2s.pddl.problem_description import PDDLProblem
 from s2s.pddl.proposition import Proposition
 from s2s.render import visualise_partitions, visualise_symbols
-from s2s.utils import save, make_dir, show
+from s2s.utils import save, make_dir, show, load
 
 if __name__ == '__main__':
     np.random.seed(0)
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     make_dir('test')
     transition_data, initiation_data = collect_data(S2SWrapper(env, 1000), max_episode=n_episodes, verbose=True,
-                                                    n_jobs=7)
+                                                    n_jobs=8)
     transition_data.to_pickle('test/transition.pkl', compression='gzip')
     initiation_data.to_pickle('test/init.pkl', compression='gzip')
 
@@ -47,8 +47,6 @@ if __name__ == '__main__':
     # TODO: Fix slow :(
     visualise_partitions('full_run/vis_partitions', env, partitions, verbose=True,
                                           option_descriptor=lambda option: env.option_names[option])
-
-    exit(0)
 
     preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=8,
                                         max_precondition_samples=10000)

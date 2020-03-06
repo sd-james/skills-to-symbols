@@ -120,8 +120,9 @@ if __name__ == '__main__':
     env = TreasureGame()
     domain, problem = build_model(env,
                                   save_dir='temp',
-                                  n_jobs=6,
+                                  n_jobs=8,
                                   seed=0,
+                                  visualise=True,
                                   verbose=True)
     print(domain)
     print(problem)
