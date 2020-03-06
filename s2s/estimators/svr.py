@@ -3,13 +3,14 @@ import numpy as np
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVR
 
+from s2s.estimators.estimators import RewardRegressor
 from s2s.estimators.kde import KernelDensityEstimator
 from s2s.utils import show
 
 __author__ = 'Steve James and George Konidaris'
 
 
-class SupportVectorRegressor:
+class SupportVectorRegressor(RewardRegressor):
     """
     An estimator that predicts the reward for executing the option in a given state. The option here is implicit
     """

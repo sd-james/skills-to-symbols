@@ -1,21 +1,17 @@
 import random
-
 import time
+
+import numpy as np
+import pandas as pd
 
 from domain.treasure_game import TreasureGame
 from s2s.build_pddl import build_pddl
-from s2s.env import S2SWrapper
-from s2s.explore import collect_data
-from s2s.learn_operators import learn_preconditions, learn_effects, combine_learned_operators
-from s2s.partition import partition_options
+from s2s.learn_operators import learn_effects, combine_learned_operators, learn_preconditions
 from s2s.pddl.domain_description import PDDLDomain
 from s2s.pddl.problem_description import PDDLProblem
 from s2s.pddl.proposition import Proposition
-from s2s.render import visualise_partitions, save_visualised_partitions, visualise_symbols
-from s2s.wrappers import MaxLength, ConditionalAction, ActionExecutable
-import numpy as np
-import pandas as pd
-from s2s.utils import save, load, pd2np
+from s2s.render import visualise_partitions
+from s2s.utils import save, load
 
 if __name__ == '__main__':
     np.random.seed(0)
@@ -43,25 +39,23 @@ if __name__ == '__main__':
     partitions = load('full_run/partitions.pkl')
 
     # TODO: Fix slow :(
-    visualise_partitions('full_run/vis_partitions', env, partitions, verbose=True,
-                                          option_descriptor=lambda option: env.option_names[option])
+    # visualise_partitions('full_run/vis_partitions', env, partitions, verbose=True,
+    #                                       option_descriptor=lambda option: env.option_names[option])
 
+    preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=8,
+                                        max_precondition_samples=10000)
+    save(preconditions, 'full_run/new-preconditions.pkl')
 
-    #
-    # preconditions = learn_preconditions(env, initiation_data, partitions, verbose=True, n_jobs=8,
-    #                                     max_precondition_samples=10000)
-    # save(preconditions, 'full_run/preconditions.pkl')
+    preconditions = load('full_run/new-preconditions.pkl')
 
-    preconditions = load('full_run/preconditions.pkl')
+    effects = learn_effects(partitions, verbose=True, n_jobs=1)
+    save(effects, 'full_run/new-effects.pkl')
 
-    # effects = learn_effects(env, partitions, verbose=True, n_jobs=8, specify_rewards=False)
-    # save(effects, 'full_run/effects.pkl')
+    effects = load('full_run/new-effects.pkl')
+    operators = combine_learned_operators(env, partitions, preconditions, effects)
+    save(operators, 'full_run/new-operators.pkl')
 
-    effects = load('full_run/effects.pkl')
-    # operators = combine_learned_operators(env, partitions, preconditions, effects)
-    # save(operators, 'full_run/operators.pkl')
-
-    operators = load('full_run/operators.pkl')
+    operators = load('full_run/new-operators.pkl')
 
     # generate vocabulary
     vocabulary, schemata = build_pddl(env, transition_data, operators, verbose=True, n_jobs=8)

@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 from warnings import warn
 from collections import ChainMap
 
@@ -7,10 +7,11 @@ import gym
 import numpy as np
 import pandas as pd
 
+from s2s.estimators.estimators import RewardRegressor, StateDensityEstimator, PreconditionClassifier
+from s2s.estimators.simple_regressor import SimpleRegressor
 from s2s.learned_operator import LearnedOperator
 from s2s.estimators.kde import KernelDensityEstimator
 from s2s.estimators.svc import SupportVectorClassifier
-from s2s.estimators.svr import SupportVectorRegressor
 from s2s.feature_selection import _compute_precondition_mask
 from s2s.partitioned_option import PartitionedOption
 from s2s.utils import show, pd2np, run_parallel
@@ -21,7 +22,7 @@ __author__ = 'Steve James and George Konidaris'
 def combine_learned_operators(env: gym.Env, partitioned_options: Dict[int, List[PartitionedOption]],
                               preconditions: Dict[Tuple[int, int], SupportVectorClassifier],
                               effects: Dict[
-                                  Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]) \
+                                  Tuple[int, int], List[Tuple[float, StateDensityEstimator, RewardRegressor]]]) \
         -> List[LearnedOperator]:
     """
     Merge all the learned partitions, preconditions and effects into a data structure
@@ -40,68 +41,63 @@ def combine_learned_operators(env: gym.Env, partitioned_options: Dict[int, List[
     return operators
 
 
-def learn_effects(env: gym.Env, partitioned_options: Dict[int, List[PartitionedOption]],
+def learn_effects(partitioned_options: Dict[int, List[PartitionedOption]],
                   verbose=False, **kwargs) \
-        -> Dict[Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]:
+        -> Dict[Tuple[int, int], List[Tuple[float, StateDensityEstimator, RewardRegressor]]]:
     """
     Estimate the effects from data
-    :param env: the domain
     :param partitioned_options: the partitioned options (a dictionary containing a list of partitions for each option)
     :param verbose: the verbosity level
     :return: the probability, next-state estimators and reward estimators
     """
     n_jobs = kwargs.get('n_jobs', 1)
     show("Running on {} CPUs".format(n_jobs), verbose)
-    splits = np.array_split(range(env.action_space.n), n_jobs)
-    functions = [
-        partial(_learn_effects, splits[i], partitioned_options, verbose, **kwargs)
-        for i in range(n_jobs)]
+    partition_splits = np.array_split(_flatten(partitioned_options), n_jobs)
+    functions = [partial(_learn_effects, partition_splits[i], verbose, **kwargs) for i in range(n_jobs)]
     # run in parallel
     effects: List[
-        Dict[Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]] = run_parallel(
+        Dict[Tuple[int, int], List[Tuple[float, StateDensityEstimator, RewardRegressor]]]] = run_parallel(
         functions)
     return dict(ChainMap(*effects))  # reduce to single dict
 
 
-def _learn_effects(options: List[int], partitioned_options: Dict[int, List[PartitionedOption]],
-                   verbose=False, **kwargs) \
-        -> Dict[Tuple[int, int], List[Tuple[float, KernelDensityEstimator, SupportVectorRegressor]]]:
+def _learn_effects(partitioned_options: List[PartitionedOption], verbose=False, **kwargs) \
+        -> Dict[Tuple[int, int], List[Tuple[float, StateDensityEstimator, RewardRegressor]]]:
     effects = dict()
-    for option in options:
+    for partition in partitioned_options:
 
-        for i, partition in enumerate(partitioned_options[option]):
+        option = partition.option
+        show("Calculating effects for option {}, partition {}:".format(option, partition.partition), verbose)
 
-            show("Calculating effects for option {}, partition {}:".format(option, i), verbose)
+        probabilistic_outcomes = list()  # a list of tuples (prob, effect estimator, reward estimator)
 
-            probabilistic_outcomes = list()  # a list of tuples (prob, effect estimator, reward estimator)
+        for j, (prob, states, rewards, next_states, masks) in enumerate(partition.effects()):
+            show("Processing probabilistic effect {}".format(j), verbose)
 
-            for j, (prob, states, rewards, next_states, masks) in enumerate(partition.effects()):
-                show("Processing probabilistic effect {}".format(j), verbose)
+            # make sure no issues with masks. They should all be the same,  else there's a problem with partitioning
+            if not (masks == masks[0]).all():
+                raise ValueError("Masks in effect for option {}, partition {} are different!"
+                                 .format(option, partition.partition))
+            mask = sorted(masks[0])  # sorting to prevent any bugs ever!
 
-                # make sure no issues with masks. They should all be the same,  else there's a problem with partitioning
-                if not (masks == masks[0]).all():
-                    raise ValueError("Masks in effect for option {}, partition {} are different!"
-                                     .format(option, partition.partition))
-                mask = sorted(masks[0])  # sorting to prevent any bugs ever!
+            show("Fitting effect estimator", verbose)
+            effect = KernelDensityEstimator(mask)
+            effect.fit(next_states, verbose=verbose, **kwargs)  # compute the effect
 
-                show("Fitting effect estimator", verbose)
-                effect = KernelDensityEstimator(mask)
-                effect.fit(next_states, verbose=verbose, **kwargs)  # compute the effect
-
-                if kwargs.get('specify_rewards', True):
-                    show("Fitting reward estimator", verbose)
-                    reward_estimator = SupportVectorRegressor()
-                    reward_estimator.fit(states, rewards, verbose=verbose, **kwargs)  # estimate the reward
-                else:
-                    reward_estimator = None
-                probabilistic_outcomes.append((prob, effect, reward_estimator))
-            effects[(option, partition.partition)] = probabilistic_outcomes
+            if kwargs.get('specify_rewards', True):
+                show("Fitting reward estimator", verbose)
+                reward_estimator = SimpleRegressor()
+                reward_estimator.fit(states, rewards, verbose=verbose, **kwargs)  # estimate the reward
+            else:
+                reward_estimator = None
+            probabilistic_outcomes.append((prob, effect, reward_estimator))
+        effects[(option, partition.partition)] = probabilistic_outcomes
 
     return effects
 
 
 def learn_preconditions(env: gym.Env, init_data: pd.DataFrame, partitioned_options: Dict[int, List[PartitionedOption]],
-                        verbose=False, **kwargs) -> Dict[Tuple[int, int], SupportVectorClassifier]:
+                        verbose=False, **kwargs) -> Dict[Tuple[int, int], PreconditionClassifier]:
     """
     Learn all the preconditions for the partitioned options
     :param env: the domain
@@ -112,37 +108,39 @@ def learn_preconditions(env: gym.Env, init_data: pd.DataFrame, partitioned_optio
     """
     n_jobs = kwargs.get('n_jobs', 1)
     show("Running on {} CPUs".format(n_jobs), verbose)
-    splits = np.array_split(range(env.action_space.n), n_jobs)
-    functions = [
-        partial(_learn_preconditions, splits[i], init_data, partitioned_options, verbose, **kwargs)
-        for i in range(n_jobs)]
+    partition_splits = np.array_split(_flatten(partitioned_options), n_jobs)
+    functions = [partial(_learn_preconditions, init_data, partition_splits[i], partitioned_options, verbose, **kwargs)
+                 for i in range(n_jobs)]
     # run in parallel
-    preconditions: List[Dict[Tuple[int, int], SupportVectorClassifier]] = run_parallel(functions)
+    preconditions: List[Dict[Tuple[int, int], PreconditionClassifier]] = run_parallel(functions)
     return dict(ChainMap(*preconditions))  # reduce to single dict
 
 
-def _learn_preconditions(options: List[int], init_data: pd.DataFrame,
-                         partitioned_options: Dict[int, List[PartitionedOption]],
-                         verbose=False, **kwargs) -> Dict[Tuple[int, int], SupportVectorClassifier]:
+def _learn_preconditions(init_data: pd.DataFrame, partitioned_options: List[PartitionedOption],
+                         all_partitions: Dict[int, List[PartitionedOption]],
+                         verbose=False, **kwargs) -> Dict[Tuple[int, int], PreconditionClassifier]:
     preconditions = dict()
-    for option in options:
-
-        negative_data = pd2np(init_data.loc[(init_data['option'] == option) &
-                                            (init_data['can_execute'] == False)]['state'])
+    prev_option = None
+    negative_data = None
+    for partition in partitioned_options:
+        option = partition.option
+        if option != prev_option:
+            # no need to reload if no change
+            negative_data = pd2np(init_data.loc[(init_data['option'] == option) &
+                                                (init_data['can_execute'] == False)]['state'])
         # must do equals False because Pandas!
 
-        for i, partition in enumerate(partitioned_options[option]):
-            show('Learning precondition for option {}, partition {}'.format(option, partition.partition), verbose)
-            if kwargs.get('augment_negative', True):
-                # augment negative samples from the initiation sets of the other partitions
-                negative_samples = _augment_negative(negative_data, partition.partition, partitioned_options[option])
-            else:
-                negative_samples = negative_data
-            positive_samples = partition.states
-            precondition = _learn_precondition(partition, negative_samples, positive_samples,
-                                               verbose=verbose, **kwargs)
-            preconditions[(option, partition.partition)] = precondition
-
+        show('Learning precondition for option {}, partition {}'.format(option, partition.partition), verbose)
+        if kwargs.get('augment_negative', True):
+            # augment negative samples from the initiation sets of the other partitions
+            negative_samples = _augment_negative(negative_data, partition.partition, all_partitions[option])
+        else:
+            negative_samples = negative_data
+        positive_samples = partition.states
+        precondition = _learn_precondition(partition, negative_samples, positive_samples,
+                                           verbose=verbose, **kwargs)
+        preconditions[(option, partition.partition)] = precondition
+        prev_option = option
     return preconditions
 
 
@@ -225,3 +223,10 @@ def _resample(positive_samples: np.ndarray, negative_samples: np.ndarray, max_sa
             raise ValueError("Resampling went wrong!")
 
     return positive_samples, negative_samples
+
+
+def _flatten(data: Dict[Any, List[Any]]) -> List[Any]:
+    """
+    Flatten a dictionary of lists into a single list
+    """
+    return sum([value for _, value in data.items()], [])

@@ -1,15 +1,16 @@
-import threading
 from typing import List
 
 import numpy as np
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
+
+from s2s.estimators.estimators import PreconditionClassifier
 from s2s.utils import show, is_single_sample
 
 __author__ = 'Steve James and George Konidaris'
 
 
-class SupportVectorClassifier:
+class SupportVectorClassifier(PreconditionClassifier):
     """
     An implementation of a probabilistic classifier that uses support vector machines with Platt scaling
     """

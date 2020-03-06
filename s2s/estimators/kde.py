@@ -4,12 +4,17 @@ from typing import List, Iterable
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KernelDensity
 
+from s2s.estimators.estimators import StateDensityEstimator
 from s2s.utils import show
 
 __author__ = 'Steve James and George Konidaris'
 
 
-class KernelDensityEstimator:
+class KernelDensityEstimator(StateDensityEstimator):
+    """
+    A density estimator that models a distribution over low-level states
+    """
+
 
     def __init__(self, mask: List[int]):
         """
@@ -43,29 +48,16 @@ class KernelDensityEstimator:
         """
         return self._mask
 
-    def sample(self, n_samples=100):
+    def sample(self, n_samples=100) -> np.ndarray:
+        """
+        Sample data from the density estimator
+        :param n_samples: the number of samples
+        :return an array of size [n_samples, len(mask)]
+        """
         data = self._kde.sample(n_samples)
         if len(data.shape) == 1:  # ensure always shape of (N X D)
             return np.reshape(data, (data.shape[0], 1))
         return data
-
-    @staticmethod
-    def _extract_remaining(a, b):
-        """
-          Return the elements of a that are not in b.
-          Return two nd-arrays, the first listing these elements,
-          the second listing their indices.
-        """
-        new_vars = []
-        new_indices = []
-
-        for pos in range(0, len(a)):
-            val = a[pos]
-            if not (val in b):
-                new_vars.append(val)
-                new_indices.append(pos)
-
-        return np.array(new_vars), np.array(new_indices)
 
     def integrate_out(self,
                       variable_list: Iterable[int],
