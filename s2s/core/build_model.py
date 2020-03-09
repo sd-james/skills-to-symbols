@@ -15,7 +15,7 @@ from s2s.pddl.domain_description import PDDLDomain
 from s2s.pddl.problem_description import PDDLProblem
 from s2s.pddl.proposition import Proposition
 from s2s.render import visualise_partitions, visualise_symbols
-from s2s.utils import save, make_dir, show
+from s2s.utils import save, make_dir, show, load
 
 __author__ = 'Steve James and George Konidaris'
 
@@ -51,19 +51,29 @@ def build_model(env: S2SEnv,
     millis = int(round(time.time() * 1000))
 
     # 1. Collect data
-    transition_data, initiation_data = collect_data(S2SWrapper(env, options_per_episode),
-                                                    max_episode=n_episodes,
-                                                    verbose=verbose,
-                                                    n_jobs=n_jobs,
-                                                    **kwargs)
+    # transition_data, initiation_data = collect_data(S2SWrapper(env, options_per_episode),
+    #                                                 max_episode=n_episodes,
+    #                                                 verbose=verbose,
+    #                                                 n_jobs=n_jobs,
+    #                                                 **kwargs)
+
+    import pandas as pd
+    transition_data = pd.read_pickle('{}/transition.pkl'.format(save_dir), compression='gzip')
+    initiation_data = pd.read_pickle('{}/init.pkl'.format(save_dir), compression='gzip')
 
     show('\n\nTime to collect took {} ms'.format(int(round(time.time() * 1000)) - millis), verbose)
+
+    temp = int(round(time.time() * 1000))
 
     # 2. Partition options
     partitions = partition_options(env,
                                    transition_data,
                                    verbose=verbose,
                                    **kwargs)
+
+    show('\n\nTime to partition took {} ms'.format(int(round(time.time() * 1000)) - temp), verbose)
+
+    temp = int(round(time.time() * 1000))
 
     # 3. Estimate preconditions
     preconditions = learn_preconditions(env,
@@ -95,9 +105,9 @@ def build_model(env: S2SEnv,
     if save_dir is not None:
         show("Saving data in {}...".format(save_dir), verbose)
         make_dir(save_dir)
-        transition_data.to_pickle('{}}/transition.pkl'.format(save_dir), compression='gzip')
+        transition_data.to_pickle('{}/transition.pkl'.format(save_dir), compression='gzip')
         initiation_data.to_pickle('{}/init.pkl'.format(save_dir), compression='gzip')
-        save(partitions, '{}}/partitions.pkl'.format(save_dir))
+        save(partitions, '{}/partitions.pkl'.format(save_dir))
         save(preconditions, '{}/preconditions.pkl'.format(save_dir))
         save(effects, '{}/effects.pkl'.format(save_dir))
         save(operators, '{}/operators.pkl'.format(save_dir))
@@ -109,9 +119,9 @@ def build_model(env: S2SEnv,
         if visualise:
             show("Visualising data (this may take time)...", verbose)
             # TODO: Fix slow :(
-            visualise_partitions('{}}/vis_partitions'.format(save_dir), env, partitions, verbose=verbose,
+            visualise_partitions('{}/vis_partitions'.format(save_dir), env, partitions, verbose=verbose,
                                  option_descriptor=lambda option: env.describe_option(option))
-            visualise_symbols('full_run/vis_symbols', env, vocabulary, verbose=True, render=env.render_states)
+            visualise_symbols('{}/vis_symbols'.format(save_dir), env, vocabulary, verbose=True, render=env.render_states)
 
     return pddl, pddl_problem
 
@@ -119,9 +129,10 @@ def build_model(env: S2SEnv,
 if __name__ == '__main__':
     env = TreasureGame()
     domain, problem = build_model(env,
-                                  save_dir='temp',
+                                  save_dir='../temp',
                                   n_jobs=8,
                                   seed=0,
+                                  max_precondition_samples=10000,
                                   visualise=True,
                                   verbose=True)
     print(domain)
