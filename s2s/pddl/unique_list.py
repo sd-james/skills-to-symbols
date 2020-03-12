@@ -1,5 +1,6 @@
 from typing import Callable
 
+from s2s.estimators.estimators import StateDensityEstimator
 from s2s.estimators.kde import KernelDensityEstimator
 
 __author__ = 'Steve James and George Konidaris'
@@ -24,7 +25,7 @@ class UniquePredicateList:
         self._goal_predicates = list()
         self.__idx = 0
 
-    def append(self, item: KernelDensityEstimator, start_predicate=False, goal_predicate=False) -> Proposition:
+    def append(self, item: StateDensityEstimator, start_predicate=False, goal_predicate=False) -> Proposition:
         """
         Add an item to the list
         :param item: the item to add

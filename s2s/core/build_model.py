@@ -5,12 +5,11 @@ from typing import Tuple
 import numpy as np
 from gym.spaces import Discrete
 
-from s2s.core.build_pddl import build_pddl
-from s2s.env.s2s_env import S2SEnv, S2SWrapper
-from s2s.env.treasure_game.treasure_game import TreasureGame
+from s2s.core.build_pddl import build_pddl, find_goal_symbols
 from s2s.core.explore import collect_data
 from s2s.core.learn_operators import learn_preconditions, learn_effects, combine_learned_operators
 from s2s.core.partition import partition_options
+from s2s.env.s2s_env import S2SEnv, S2SWrapper
 from s2s.pddl.domain_description import PDDLDomain
 from s2s.pddl.problem_description import PDDLProblem
 from s2s.pddl.proposition import Proposition
@@ -51,29 +50,17 @@ def build_model(env: S2SEnv,
     millis = int(round(time.time() * 1000))
 
     # 1. Collect data
-    # transition_data, initiation_data = collect_data(S2SWrapper(env, options_per_episode),
-    #                                                 max_episode=n_episodes,
-    #                                                 verbose=verbose,
-    #                                                 n_jobs=n_jobs,
-    #                                                 **kwargs)
-
-    import pandas as pd
-    transition_data = pd.read_pickle('{}/transition.pkl'.format(save_dir), compression='gzip')
-    initiation_data = pd.read_pickle('{}/init.pkl'.format(save_dir), compression='gzip')
-
-    show('\n\nTime to collect took {} ms'.format(int(round(time.time() * 1000)) - millis), verbose)
-
-    temp = int(round(time.time() * 1000))
+    transition_data, initiation_data = collect_data(S2SWrapper(env, options_per_episode),
+                                                    max_episode=n_episodes,
+                                                    verbose=verbose,
+                                                    n_jobs=n_jobs,
+                                                    **kwargs)
 
     # 2. Partition options
     partitions = partition_options(env,
                                    transition_data,
                                    verbose=verbose,
                                    **kwargs)
-
-    show('\n\nTime to partition took {} ms'.format(int(round(time.time() * 1000)) - temp), verbose)
-
-    temp = int(round(time.time() * 1000))
 
     # 3. Estimate preconditions
     preconditions = learn_preconditions(env,
@@ -88,16 +75,19 @@ def build_model(env: S2SEnv,
     operators = combine_learned_operators(env, partitions, preconditions, effects)
 
     # 5. Build PDDL
-    vocabulary, schemata = build_pddl(env, transition_data, operators, verbose=verbose, n_jobs=n_jobs, **kwargs)
+    factors, vocabulary, schemata = build_pddl(env, transition_data, operators, verbose=verbose, n_jobs=n_jobs,
+                                               **kwargs)
     pddl = PDDLDomain(env, vocabulary, schemata)
 
+    # 6. Build PDDL problem file
     pddl_problem = PDDLProblem('{}-problem'.format(env.name), env.name)
     pddl_problem.add_start_proposition(Proposition.not_failed())
     for prop in vocabulary.start_predicates:
         pddl_problem.add_start_proposition(prop)
 
+    goal_prob, goal_symbols = find_goal_symbols(factors, vocabulary, transition_data, verbose=verbose, **kwargs)
     pddl_problem.add_goal_proposition(Proposition.not_failed())
-    for prop in vocabulary.goal_predicates:
+    for prop in vocabulary.goal_predicates + goal_symbols:
         pddl_problem.add_goal_proposition(prop)
 
     show('\n\nBuilding PDDL took {} ms'.format(int(round(time.time() * 1000)) - millis), verbose)
@@ -111,6 +101,7 @@ def build_model(env: S2SEnv,
         save(preconditions, '{}/preconditions.pkl'.format(save_dir))
         save(effects, '{}/effects.pkl'.format(save_dir))
         save(operators, '{}/operators.pkl'.format(save_dir))
+        save(factors, '{}/factors.pkl'.format(save_dir))
         save(vocabulary, '{}/predicates.pkl'.format(save_dir))
         save(schemata, '{}/schemata.pkl'.format(save_dir))
         save(pddl, '{}/domain.pddl'.format(save_dir), binary=False)
@@ -121,19 +112,7 @@ def build_model(env: S2SEnv,
             # TODO: Fix slow :(
             visualise_partitions('{}/vis_partitions'.format(save_dir), env, partitions, verbose=verbose,
                                  option_descriptor=lambda option: env.describe_option(option))
-            visualise_symbols('{}/vis_symbols'.format(save_dir), env, vocabulary, verbose=True, render=env.render_states)
+            visualise_symbols('{}/vis_symbols'.format(save_dir), env, vocabulary, verbose=True,
+                              render=env.render_states)
 
     return pddl, pddl_problem
-
-
-if __name__ == '__main__':
-    env = TreasureGame()
-    domain, problem = build_model(env,
-                                  save_dir='../temp',
-                                  n_jobs=8,
-                                  seed=0,
-                                  max_precondition_samples=10000,
-                                  visualise=True,
-                                  verbose=True)
-    print(domain)
-    print(problem)

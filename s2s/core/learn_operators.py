@@ -12,8 +12,8 @@ from s2s.estimators.estimators import RewardRegressor, StateDensityEstimator, Pr
 from s2s.estimators.kde import KernelDensityEstimator
 from s2s.estimators.simple_regressor import SimpleRegressor
 from s2s.estimators.svc import SupportVectorClassifier
-from s2s.learned_operator import LearnedOperator
-from s2s.partitioned_option import PartitionedOption
+from s2s.core.learned_operator import LearnedOperator
+from s2s.core.partitioned_option import PartitionedOption
 from s2s.utils import show, pd2np, run_parallel
 
 __author__ = 'Steve James and George Konidaris'
@@ -137,7 +137,8 @@ def _learn_preconditions(init_data: pd.DataFrame, partitioned_options: List[Part
         else:
             negative_samples = negative_data
         positive_samples = partition.states
-        precondition = _learn_precondition(partition, negative_samples, positive_samples,
+        show("Calculating mask for option {}, partition {} ...".format(partition.option, partition.partition), verbose)
+        precondition = _learn_precondition(positive_samples, negative_samples,
                                            verbose=verbose, **kwargs)
         preconditions[(option, partition.partition)] = precondition
         prev_option = option
@@ -164,23 +165,20 @@ def _augment_negative(negative_data: np.ndarray, current_partition: int,
     return np.vstack(negatives)
 
 
-def _learn_precondition(partition: PartitionedOption, negative_samples: np.ndarray,
-                        positive_samples: np.ndarray, verbose=False, **kwargs) -> PreconditionClassifier:
+def _learn_precondition(positive_samples: np.ndarray, negative_samples: np.ndarray, verbose=False,
+                        **kwargs) -> PreconditionClassifier:
     """
     Learn a single classifier for a partitioned option
-    :param partition: the partitioned option
-    :param negative_samples: the negative samples
     :param positive_samples: the positive samples
+    :param negative_samples: the negative samples
     :param verbose: the verbosity level
     :return: the classifier
     """
     if len(negative_samples) == 0 or len(positive_samples) == 0:
-        warn("Need positive and negative samples!")
-        return None
+        raise ValueError("The number of positive and negative samples for the precondition is {} and {}".format(
+            len(positive_samples), len(negative_samples)))
 
-    show("Calculating mask for option {}, partition {} ...".format(partition.option, partition.partition), verbose)
-
-    # the max number of samples to use for computing the mask
+        # the max number of samples to use for computing the mask
     max_precondition_samples = kwargs.get('max_precondition_samples', np.inf)
     # resample if too much data
     positive_samples, negative_samples = _resample(positive_samples, negative_samples, max_precondition_samples)

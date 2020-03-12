@@ -12,6 +12,7 @@ class PreconditionClassifier(ABC):
     A classifier that determines whether an option can be executed in a given state
     """
 
+    @property
     @abstractmethod
     def mask(self) -> List[int]:
         """
@@ -53,6 +54,7 @@ class StateDensityEstimator(ABC):
         """
         pass
 
+    @property
     @abstractmethod
     def mask(self) -> List[int]:
         """

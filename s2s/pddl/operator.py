@@ -1,7 +1,6 @@
 from typing import List
 
-from s2s.estimators.svr import SupportVectorRegressor
-from s2s.learned_operator import LearnedOperator
+from s2s.core.learned_operator import LearnedOperator
 from s2s.pddl.proposition import Proposition
 from s2s.utils import indent
 

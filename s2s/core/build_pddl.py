@@ -8,9 +8,10 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import silhouette_score
 
+from s2s.core.learn_operators import _learn_precondition
+from s2s.estimators.estimators import StateDensityEstimator, PreconditionClassifier
 from s2s.estimators.kde import KernelDensityEstimator
-from s2s.estimators.svc import SupportVectorClassifier
-from s2s.learned_operator import LearnedOperator
+from s2s.core.learned_operator import LearnedOperator
 from s2s.pddl.operator import Operator
 from s2s.pddl.proposition import Proposition
 from s2s.pddl.unique_list import UniquePredicateList
@@ -64,6 +65,54 @@ def _close_silhouette(x: KernelDensityEstimator, y: KernelDensityEstimator) -> b
     return -threshold <= overlap <= threshold
 
 
+def find_goal_symbols(factors: List[List[int]], vocabulary: Iterable[Proposition], transition_data: pd.DataFrame,
+                      verbose=False, **kwargs) -> Tuple[float, List[Proposition]]:
+    """
+    Find the set of symbols that best described the goal condition. In teh data, the goal being achieved is specified
+    by the done flag
+    :param factors: the domain factorisation
+    :param vocabulary: the list of symbols
+    :param transition_data: the transition data
+    :param verbose: the verbosity level
+    :return the probability of the symbols modelling the goal, and the list of symbols themselves
+    """
+    # the goal states
+    positive_samples = pd2np(transition_data.loc[transition_data['goal_achieved'] == True]['next_state'])
+    negative_samples = pd2np(transition_data.loc[transition_data['goal_achieved'] == False]['next_state'])
+
+    # fit a classifier to the data
+    svm = _learn_precondition(positive_samples, negative_samples, verbose=verbose, **kwargs)
+
+    # Find the existing symbols that best match the goal precondition
+    show("Finding matching symbols", verbose)
+    precondition_factors = _mask_to_factors(svm.mask, factors)
+    candidates = list()
+    for factor in precondition_factors:
+        candidates.append([proposition for proposition in vocabulary if set(proposition.mask) == set(factor)])
+
+    combinations = list(itertools.product(*candidates))
+    show("Searching through {} candidates...".format(len(combinations)), verbose)
+
+    best_score = 0
+    best_candidates = None
+
+    for count, candidates in enumerate(combinations):
+        show("Checking candidate {}".format(count), verbose)
+        if _masks_overlap(candidates):
+            # This should never happen, but putting a check to make sure
+            warn("Overlapping candidates in PDDL building!")
+            continue
+
+        # probability of propositions matching classifier
+        precondition_prob = _probability_in_precondition(candidates, svm)
+        if precondition_prob > best_score:
+            best_score = precondition_prob
+            best_candidates = candidates
+    show("Best candidates with probability {}: {}".format(best_score, ' '.join([str(x) for x in best_candidates])),
+         verbose)
+    return best_score, list(best_candidates)
+
+
 def _generate_goal_symbols(transition_data: pd.DataFrame, factors: List[List[int]],
                            verbose=False, **kwargs) -> List[KernelDensityEstimator]:
     show("Generating goal symbols...", verbose)
@@ -72,7 +121,7 @@ def _generate_goal_symbols(transition_data: pd.DataFrame, factors: List[List[int
 
 
 def _generate_start_symbols(transition_data: pd.DataFrame, factors: List[List[int]],
-                            verbose=False, **kwargs) -> List[KernelDensityEstimator]:
+                            verbose=False, **kwargs) -> List[StateDensityEstimator]:
     show("Generating start state symbols...", verbose)
 
     # group by episode and get the first state from each
@@ -81,7 +130,8 @@ def _generate_start_symbols(transition_data: pd.DataFrame, factors: List[List[in
     return _generate_symbols(initial_states, factors, verbose=verbose, **kwargs)
 
 
-def _generate_symbols(states: np.ndarray, total_factors: List[List[int]], verbose=False, **kwargs):
+def _generate_symbols(states: np.ndarray, total_factors: List[List[int]], verbose=False, **kwargs) \
+        -> List[StateDensityEstimator]:
     symbols = list()
     show("Fitting estimator to states", verbose)
 
@@ -100,14 +150,14 @@ def _generate_symbols(states: np.ndarray, total_factors: List[List[int]], verbos
 
 
 def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[LearnedOperator], verbose=False,
-               **kwargs) -> Tuple[UniquePredicateList, List[Operator]]:
+               **kwargs) -> Tuple[List[List[int]], UniquePredicateList, List[Operator]]:
     """
     Given the learned preconditions and effects, generate a valid PDDL representation
     :param env: teh domain
     :param transition_data: the transition data
     :param operators: the learned operators
     :param verbose: the verbosity level
-    :return: the predicates and PDDL operators
+    :return: the factors, predicates and PDDL operators
     """
     dist_comparator = kwargs.get('dist_comparator', _overlapping_dists)
     vocabulary = UniquePredicateList(dist_comparator)
@@ -119,8 +169,8 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     show("Final factors:\n\n{}".format(factors), verbose)
     #
     # generate a distribution over start states
-    goal_symbols = _generate_start_symbols(transition_data, factors, verbose=verbose, **kwargs)
-    for new_dist in goal_symbols:
+    start_symbols = _generate_start_symbols(transition_data, factors, verbose=verbose, **kwargs)
+    for new_dist in start_symbols:
         vocabulary.append(new_dist, start_predicate=True)
 
     n_start_propositions = len(vocabulary)
@@ -150,7 +200,7 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     schemata = sum(run_parallel(functions), [])
 
     show("Found {} PDDL operators".format(len(schemata)), verbose)
-    return vocabulary, schemata
+    return factors, vocabulary, schemata
 
 
 def _build_pddl_operators(env: gym.Env, factors: List[List[int]], operators: List[LearnedOperator],
@@ -179,7 +229,7 @@ def _build_pddl_operators(env: gym.Env, factors: List[List[int]], operators: Lis
     return schemata
 
 
-def _probability_in_precondition(estimators: Iterable[Proposition], precondition: SupportVectorClassifier,
+def _probability_in_precondition(estimators: Iterable[Proposition], precondition: PreconditionClassifier,
                                  allow_fill_in=False, verbose=False, **kwargs) -> float:
     """
     Draw samples from the estimators and feed to the precondition. Take the average result
@@ -268,11 +318,6 @@ def _build_pddl_operator(env: gym.Env, precondition_factors: List[List[int]], op
         # get the precondition masks from the candidates. Make sure sorted to avoid bugs!
         precondition_masks = sorted(
             list(itertools.chain.from_iterable([proposition.mask for proposition in candidates])))
-
-        # if (not allow_fill_in and not np.array_equal(precondition_masks, operator.precondition.mask)) or (
-        #         allow_fill_in and not set(precondition_masks).issubset(operator.precondition.mask)):
-        #     #  effect mask does not match precondition!
-        #     continue
 
         # probability of propositions matching classifier
         precondition_prob = _probability_in_precondition(candidates, operator.precondition, allow_fill_in)

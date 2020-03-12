@@ -4,7 +4,7 @@ import numpy as np
 
 from s2s.env.s2s_env import S2SEnv
 from s2s.image import Image
-from s2s.partitioned_option import PartitionedOption
+from s2s.core.partitioned_option import PartitionedOption
 from s2s.pddl.proposition import Proposition
 from s2s.utils import show, make_dir, make_path
 

@@ -68,7 +68,7 @@ def _collect_data(env: S2SWrapper, seed=None, max_timestep=np.inf, max_episode=n
         np.random.seed(seed)
 
     transition_data = pd.DataFrame(
-        columns=['episode', 'state', 'option', 'reward', 'next_state', 'done', 'mask', 'next_options'])
+        columns=['episode', 'state', 'option', 'reward', 'next_state', 'done', 'goal_achieved',  'mask', 'next_options'])
     initiation_data = pd.DataFrame(columns=['state', 'option', 'can_execute'])
 
     n_episode = 0
@@ -78,7 +78,7 @@ def _collect_data(env: S2SWrapper, seed=None, max_timestep=np.inf, max_episode=n
         state = env.reset()
         done = False
         ep_timestep = 0
-        while not done:
+        while not done and n_timesteps < max_timestep:
             action = env.sample_action()
             next_state, reward, done, info = env.step(action)
             failed = info.get('option_failed', False)
@@ -87,15 +87,9 @@ def _collect_data(env: S2SWrapper, seed=None, max_timestep=np.inf, max_episode=n
                 n_timesteps += 1
                 mask = np.where(np.array(state) != np.array(next_state))[0]  # check which indices are not equal!
                 next_options = info.get('next_actions', np.array([]))
-
-                # the max length wrapper might set it to done and we have not succeeded
-                success = done and info.get('goal_achieved', False)
-
-                if success:
-                    done = False  # we're going to keep going until we run out of time!
-
+                success = info.get('goal_achieved', False)
                 transition_data.loc[len(transition_data)] = [n_episode + episode_offset, state, action,
-                                                             reward, next_state, success, mask,
+                                                             reward, next_state, done, success, mask,
                                                              next_options]
                 ep_timestep += 1
             if 'current_actions' in info:
@@ -107,9 +101,6 @@ def _collect_data(env: S2SWrapper, seed=None, max_timestep=np.inf, max_episode=n
                 initiation_data.loc[len(initiation_data)] = [state, action, not failed]
 
             show('\tStep: {}'.format(ep_timestep), verbose and ep_timestep > 0 and ep_timestep % 50 == 0)
-
-            if done or n_timesteps >= max_timestep:
-                break
             state = next_state
         n_episode += 1
     return transition_data, initiation_data

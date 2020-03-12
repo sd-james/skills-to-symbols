@@ -3,14 +3,14 @@ import numpy as np
 import gym
 
 from s2s.image import Image
-from s2s.wrappers import ConditionalAction, MaxLength, ActionExecutable
+from s2s.wrappers import ConditionalAction, ConstantLength, ActionExecutable
 
 
 class S2SWrapper(gym.Wrapper):
 
     def __init__(self, env: 'S2SEnv', options_per_episode=np.inf):
         env = ConditionalAction(env)  # support actions that are not executable everywhere
-        env = MaxLength(env, options_per_episode)  # restrict episode lengths
+        env = ConstantLength(env, options_per_episode)  # restrict episode lengths
         env = ActionExecutable(env)  # determine at each state which actions/options are executable
         super().__init__(env)
 
@@ -18,6 +18,9 @@ class S2SWrapper(gym.Wrapper):
         state, reward, done, info = super().step(action)
         if done and not info.get('TimeLimit.truncated', False):
             info['goal_achieved'] = True
+        if info.get('force_continue', False):
+            done = False  # force the domain to continue on
+
         return state, reward, done, info
 
 

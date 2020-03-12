@@ -7,7 +7,7 @@ import pandas as pd
 from gym.spaces import Discrete
 from sklearn.cluster import DBSCAN
 
-from s2s.partitioned_option import PartitionedOption
+from s2s.core.partitioned_option import PartitionedOption
 from s2s.union_find import UnionFind
 from s2s.utils import show, pd2np, select_rows
 

@@ -17,10 +17,8 @@ class MaxLength(gym.Wrapper):
 
     def step(self, action):
         assert self._elapsed_steps is not None, "Cannot call env.step() before calling reset()"
-        observation, reward, done, info = self.env.step(action)
-        if not info.get('option_failed', False):
-            # only count if the option was actually executed. Otherwise, the environment wasn't interacted with
-            self._elapsed_steps += 1
+        observation, reward, done, info = super().step(action)
+        self._elapsed_steps += 1
         if self._elapsed_steps >= self._max_episode_steps:
             info['TimeLimit.truncated'] = not done
             done = True
@@ -29,6 +27,19 @@ class MaxLength(gym.Wrapper):
     def reset(self, **kwargs):
         self._elapsed_steps = 0
         return self.env.reset(**kwargs)
+
+
+class ConstantLength(MaxLength):
+    """
+    A wrapper that specifies the exact number of options executions that can be executed in an episode. The environment
+    MUST support the ability to continue execution even when its own done flag has been set.
+    """
+
+    def step(self, action):
+        observation, reward, done, info = super().step(action)
+        if self._elapsed_steps != self._max_episode_steps:
+            info['force_continue'] = True  # if it's not exactly this, keep going!!
+        return observation, reward, done, info
 
 
 class ConditionalAction(gym.Wrapper):
@@ -41,7 +52,7 @@ class ConditionalAction(gym.Wrapper):
 
     def step(self, action):
         can_execute = self.env.can_execute(action)
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, done, info = super().step(action)
         info['option_failed'] = not can_execute
         return observation, reward, done, info
 
@@ -54,7 +65,7 @@ class ActionExecutable(gym.Wrapper):
 
     def step(self, action):
         current_actions = self.env.available_mask
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, done, info = super().step(action)
         info['current_actions'] = current_actions
         info['next_actions'] = self.env.available_mask
         return observation, reward, done, info

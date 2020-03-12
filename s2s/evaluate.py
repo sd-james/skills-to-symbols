@@ -6,9 +6,8 @@ import numpy as np
 from gym.envs.classic_control import rendering
 
 from s2s.env.treasure_game.treasure_game import TreasureGame
-from s2s.learned_operator import LearnedOperator
+from s2s.core.learned_operator import LearnedOperator
 from s2s.utils import load
-import matplotlib.pyplot as plt
 
 
 def evaluate_plan(env: gym.Env, operators: List[LearnedOperator], plan: List[int], use_rewards=True, n_samples=100,
