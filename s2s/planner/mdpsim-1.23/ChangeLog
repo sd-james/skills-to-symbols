@@ -1,0 +1,5 @@
+2004-03-11  Håkan L. S. Younes  <lorens@cs.cmu.edu>
+
+	* states.cc: Fixed bug sending </application> tag instead of
+	</fluent> tag.
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+port=$1
+logdir=../results/sample/probabilistic/logs
+
+probdir=../problems/final/probabilistic
+problems="`find $probdir -name domain.pddl` `find $probdir -name sample.pddl`"
+
+sh STARTUP $port $logdir $problems
+

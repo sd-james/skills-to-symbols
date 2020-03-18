@@ -1,0 +1,10 @@
+#!/bin/bash
+
+port=$1
+logdir=../results/warmup/probabilistic/logs
+probdir=../problems/warmup/probabilistic
+problems="`find $probdir/tree -name "*pddl"` `find $probdir/room -name "*pddl"` $probdir/elevators/domain.pddl `find $probdir/elevators -name "elev*pddl"` $probdir/prob-bw/domain.pddl `find $probdir/prob-bw -name "bw*pddl"` $probdir/exploding-bw/domain.pddl `find $probdir/exploding-bw -name "ex*pddl"`"
+
+sh STARTUP $port $logdir $problems
+
+

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+port=$1
+logdir=/home/ipc5-08/results/final/probabilistic/logs/$1
+
+probdir=/home/ipc5-08/problems/final/probabilistic
+cfg=$probdir/final.cfg
+
+problems="`find $probdir -name domain.pddl` `find $probdir -name p??.pddl`"
+
+sh STARTUP-CFG $port $cfg $logdir $problems
+

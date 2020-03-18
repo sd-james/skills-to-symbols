@@ -1,0 +1,11 @@
+#!/bin/bash
+
+port=$1
+cfg=$2
+logdir=$3
+shift
+shift
+shift
+
+nohup ./mdpsim --port=$port --config=$cfg --log-dir=$logdir $* &
+

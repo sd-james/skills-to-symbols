@@ -1,0 +1,2790 @@
+; Automatically generated treasure game PPDDL file.
+(define (domain TREASURE_GAME)
+(:requirements :strips :probabilistic-effects :rewards)
+(:predicates
+   (notfailed)
+   (symbol1)
+   (symbol2)
+   (symbol3)
+   (symbol4)
+   (symbol5)
+   (symbol6)
+   (symbol7)
+   (symbol8)
+   (symbol9)
+   (symbol10)
+   (symbol11)
+   (symbol12)
+   (symbol13)
+   (symbol14)
+   (symbol15)
+   (symbol16)
+   (symbol17)
+   (symbol18)
+   (symbol19)
+   (symbol20)
+   (symbol21)
+   (symbol22)
+   (symbol23)
+   (symbol24)
+   (symbol25)
+   (symbol26)
+   (symbol27)
+   (symbol28)
+   (symbol29)
+   (symbol30)
+   (symbol31)
+   (symbol32)
+   (symbol33)
+   (symbol34)
+   (symbol35)
+   (symbol36)
+   (symbol37)
+   (symbol38)
+   (symbol39)
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option1
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol18) (symbol5) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.69))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option2
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol18) (symbol13) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.59))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option3
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol18) (symbol24) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.66))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option4
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol19) (symbol5) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.38))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option5
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol19) (symbol13) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.31))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option6
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol19) (symbol24) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.40))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option7
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol20) (symbol13) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.50))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option8
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol20) (symbol24) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.50))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option9
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol25) (symbol5) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.31))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option10
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol25) (symbol13) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.30))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option11
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol25) (symbol24) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.36))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option12
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol26) (symbol5) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.28))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option13
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol26) (symbol13) )
+ :effect (probabilistic 0.1841 (not (notfailed))
+          0.8159               (and (symbol8) (not (symbol1)) (decrease (reward) 41.26))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option14
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol26) (symbol24) )
+ :effect (probabilistic 0.3124 (not (notfailed))
+          0.6876               (and (symbol8) (not (symbol1)) (decrease (reward) 41.27))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option15
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol28) (symbol13) )
+ :effect (probabilistic 0.574 (not (notfailed))
+          0.426               (and (symbol8) (not (symbol1)) (decrease (reward) 41.48))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option16
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol28) (symbol24) )
+ :effect (probabilistic 0.6383 (not (notfailed))
+          0.3617               (and (symbol8) (not (symbol1)) (decrease (reward) 41.44))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option17
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol30) (symbol5) )
+ :effect               (and (symbol8) (not (symbol1)) (decrease (reward) 41.24))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option18
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol17) (symbol5) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.27))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option19
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol17) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.32))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option20
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol17) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.40))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option21
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol18) (symbol5) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.62))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option22
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol18) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.48))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option23
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol18) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.62))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option24
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol19) (symbol5) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.37))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option25
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol19) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.29))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option26
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol19) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.34))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option27
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol20) (symbol5) )
+ :effect (probabilistic 0.2681 (not (notfailed))
+          0.7319               (and (symbol8) (not (symbol11)) (decrease (reward) 41.45))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option28
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol20) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.51))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option29
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol20) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.47))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option30
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol25) (symbol5) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.35))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option31
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol25) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.40))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option32
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol25) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.22))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option33
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) (symbol5) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.36))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option34
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.38))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option35
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.21))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option36
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol28) (symbol5) )
+ :effect (probabilistic 0.0885 (not (notfailed))
+          0.9115               (and (symbol8) (not (symbol11)) (decrease (reward) 41.37))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option37
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol28) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.47))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option38
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol28) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.41))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option39
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) (symbol5) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.30))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option40
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) (symbol13) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.31))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option41
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) (symbol24) )
+ :effect               (and (symbol8) (not (symbol11)) (decrease (reward) 41.38))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option42
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol18) (symbol5) )
+ :effect               (and (symbol8) (not (symbol15)) (decrease (reward) 41.64))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option43
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol18) (symbol13) )
+ :effect               (and (symbol8) (not (symbol15)) (decrease (reward) 41.65))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option44
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol18) (symbol24) )
+ :effect               (and (symbol8) (not (symbol15)) (decrease (reward) 41.61))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option45
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol19) (symbol5) )
+ :effect               (and (symbol8) (not (symbol15)) (decrease (reward) 41.31))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option46
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol19) (symbol13) )
+ :effect               (and (symbol8) (not (symbol15)) (decrease (reward) 41.38))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option47
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol19) (symbol24) )
+ :effect               (and (symbol8) (not (symbol15)) (decrease (reward) 41.35))
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option48
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) (symbol5) )
+ :effect (probabilistic 0.2065 (not (notfailed))
+          0.7935               (and (symbol8) (not (symbol15)) (decrease (reward) 41.38))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option49
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) (symbol13) )
+ :effect (probabilistic 0.7259 (not (notfailed))
+          0.2741               (and (symbol8) (not (symbol15)) (decrease (reward) 41.29))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option50
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) (symbol24) )
+ :effect (probabilistic 0.8019 (not (notfailed))
+          0.1981               (and (symbol8) (not (symbol15)) (decrease (reward) 41.37))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option51
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol18) (symbol5) )
+ :effect (probabilistic 0.3892 (not (notfailed))
+          0.6108               (and (symbol8) (not (symbol29)) (decrease (reward) 41.55))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option52
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol18) (symbol13) )
+ :effect (probabilistic 0.3586 (not (notfailed))
+          0.6414               (and (symbol8) (not (symbol29)) (decrease (reward) 41.53))
+             )
+)
+
+; Action go_left_option-partition-1
+(:action go_left_option53
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol18) (symbol24) )
+ :effect (probabilistic 0.159 (not (notfailed))
+          0.841               (and (symbol8) (not (symbol29)) (decrease (reward) 41.57))
+             )
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option54
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol17) )
+ :effect               (and (symbol9) (not (symbol10)) (decrease (reward) 55.21))
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option55
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol28) )
+ :effect               (and (symbol9) (not (symbol10)) (decrease (reward) 55.21))
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option56
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol17) )
+ :effect               (and (symbol9) (not (symbol12)) (decrease (reward) 55.21))
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option57
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol28) )
+ :effect (probabilistic 0.2362 (not (notfailed))
+          0.7638               (and (symbol9) (not (symbol12)) (decrease (reward) 55.21))
+             )
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option58
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol17) )
+ :effect               (and (symbol9) (not (symbol14)) (decrease (reward) 55.21))
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option59
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol28) )
+ :effect (probabilistic 0.2895 (not (notfailed))
+          0.7105               (and (symbol9) (not (symbol14)) (decrease (reward) 55.23))
+             )
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option60
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol17) )
+ :effect               (and (symbol9) (not (symbol27)) (decrease (reward) 55.21))
+)
+
+; Action go_left_option-partition-2
+(:action go_left_option61
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol28) )
+ :effect               (and (symbol9) (not (symbol27)) (decrease (reward) 55.20))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option62
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol19) )
+ :effect               (and (symbol10) (decrease (reward) 33.80))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option63
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol25) )
+ :effect               (and (symbol10) (decrease (reward) 33.80))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option64
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol26) )
+ :effect (probabilistic 0.2586 (not (notfailed))
+          0.7414               (and (symbol10) (decrease (reward) 33.79))
+             )
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option65
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol2) )
+ :effect               (and (symbol10) (not (symbol14)) (decrease (reward) 33.82))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option66
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol18) )
+ :effect               (and (symbol10) (not (symbol14)) (decrease (reward) 33.82))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option67
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol19) )
+ :effect               (and (symbol10) (not (symbol14)) (decrease (reward) 33.81))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option68
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol20) )
+ :effect               (and (symbol10) (not (symbol14)) (decrease (reward) 33.84))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option69
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol25) )
+ :effect               (and (symbol10) (not (symbol14)) (decrease (reward) 33.79))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option70
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol26) )
+ :effect               (and (symbol10) (not (symbol14)) (decrease (reward) 33.81))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option71
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol30) )
+ :effect               (and (symbol10) (not (symbol14)) (decrease (reward) 33.79))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option72
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol19) )
+ :effect               (and (symbol10) (not (symbol27)) (decrease (reward) 33.80))
+)
+
+; Action go_left_option-partition-3
+(:action go_left_option73
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol25) )
+ :effect (probabilistic 0.5317 (not (notfailed))
+          0.4683               (and (symbol10) (not (symbol27)) (decrease (reward) 33.80))
+             )
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option74
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol17) )
+ :effect               (and (symbol11) (not (symbol1)) (decrease (reward) 45.19))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option75
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol19) )
+ :effect               (and (symbol11) (not (symbol1)) (decrease (reward) 45.22))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option76
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol25) )
+ :effect               (and (symbol11) (not (symbol1)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option77
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol26) )
+ :effect               (and (symbol11) (not (symbol1)) (decrease (reward) 45.19))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option78
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol30) )
+ :effect               (and (symbol11) (not (symbol1)) (decrease (reward) 45.20))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option79
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol19) )
+ :effect               (and (symbol11) (not (symbol9)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option80
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol25) )
+ :effect               (and (symbol11) (not (symbol9)) (decrease (reward) 45.24))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option81
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol26) )
+ :effect               (and (symbol11) (not (symbol9)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option82
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol30) )
+ :effect               (and (symbol11) (not (symbol9)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option83
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) )
+ :effect (probabilistic 0.8914 (not (notfailed))
+          0.1086               (and (symbol11) (decrease (reward) 45.19))
+             )
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option84
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) )
+ :effect (probabilistic 0.7836 (not (notfailed))
+          0.2164               (and (symbol11) (decrease (reward) 45.18))
+             )
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option85
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol17) )
+ :effect               (and (symbol11) (not (symbol15)) (decrease (reward) 45.20))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option86
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol19) )
+ :effect               (and (symbol11) (not (symbol15)) (decrease (reward) 45.23))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option87
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) )
+ :effect               (and (symbol11) (not (symbol15)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option88
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol26) )
+ :effect               (and (symbol11) (not (symbol15)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option89
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol28) )
+ :effect (probabilistic 0.8622 (not (notfailed))
+          0.1378               (and (symbol11) (not (symbol15)) (decrease (reward) 45.17))
+             )
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option90
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol30) )
+ :effect               (and (symbol11) (not (symbol15)) (decrease (reward) 45.20))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option91
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol17) )
+ :effect               (and (symbol11) (not (symbol29)) (decrease (reward) 45.20))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option92
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol19) )
+ :effect               (and (symbol11) (not (symbol29)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option93
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol25) )
+ :effect               (and (symbol11) (not (symbol29)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option94
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol26) )
+ :effect               (and (symbol11) (not (symbol29)) (decrease (reward) 45.22))
+)
+
+; Action go_left_option-partition-4
+(:action go_left_option95
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol30) )
+ :effect               (and (symbol11) (not (symbol29)) (decrease (reward) 45.21))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option96
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol2) (symbol22) )
+ :effect (probabilistic 0.1129 (not (notfailed))
+          0.8871               (and (symbol1) (not (symbol9)) (decrease (reward) 96.16))
+             )
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option97
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol18) (symbol22) )
+ :effect (probabilistic 0.6259 (not (notfailed))
+          0.3741               (and (symbol1) (not (symbol9)) (decrease (reward) 96.16))
+             )
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option98
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol2) (symbol22) )
+ :effect               (and (symbol1) (not (symbol10)) (decrease (reward) 96.16))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option99
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol18) (symbol22) )
+ :effect               (and (symbol1) (not (symbol10)) (decrease (reward) 96.15))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option100
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol2) (symbol22) )
+ :effect               (and (symbol1) (not (symbol12)) (decrease (reward) 96.16))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option101
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol18) (symbol22) )
+ :effect (probabilistic 0.0627 (not (notfailed))
+          0.9373               (and (symbol1) (not (symbol12)) (decrease (reward) 96.16))
+             )
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option102
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol2) (symbol22) )
+ :effect               (and (symbol1) (not (symbol14)) (decrease (reward) 96.16))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option103
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol18) (symbol22) )
+ :effect               (and (symbol1) (not (symbol14)) (decrease (reward) 96.16))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option104
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol2) (symbol22) )
+ :effect               (and (symbol1) (not (symbol27)) (decrease (reward) 96.16))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option105
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol18) (symbol22) )
+ :effect               (and (symbol1) (not (symbol27)) (decrease (reward) 96.16))
+)
+
+; Action go_left_option-partition-5
+(:action go_left_option106
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol2) (symbol22) )
+ :effect (probabilistic 0.8512 (not (notfailed))
+          0.1488               (and (symbol1) (not (symbol29)) (decrease (reward) 96.16))
+             )
+)
+
+; Action go_left_option-partition-6
+(:action go_left_option107
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol17) (symbol3) )
+ :effect (probabilistic 0.2001 (not (notfailed))
+          0.7999               (and (symbol12) (not (symbol10)) (decrease (reward) 32.60))
+             )
+)
+
+; Action go_left_option-partition-6
+(:action go_left_option108
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol20) (symbol3) )
+ :effect               (and (symbol12) (not (symbol10)) (decrease (reward) 32.62))
+)
+
+; Action go_left_option-partition-6
+(:action go_left_option109
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol28) (symbol3) )
+ :effect               (and (symbol12) (not (symbol10)) (decrease (reward) 32.61))
+)
+
+; Action go_left_option-partition-6
+(:action go_left_option110
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol17) (symbol3) )
+ :effect (probabilistic 0.7927 (not (notfailed))
+          0.2073               (and (symbol12) (not (symbol27)) (decrease (reward) 32.58))
+             )
+)
+
+; Action go_left_option-partition-6
+(:action go_left_option111
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol20) (symbol3) )
+ :effect (probabilistic 0.0555 (not (notfailed))
+          0.9445               (and (symbol12) (not (symbol27)) (decrease (reward) 32.58))
+             )
+)
+
+; Action go_left_option-partition-6
+(:action go_left_option112
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol28) (symbol3) )
+ :effect (probabilistic 0.1068 (not (notfailed))
+          0.8932               (and (symbol12) (not (symbol27)) (decrease (reward) 32.60))
+             )
+)
+
+; Action go_left_option-partition-7
+(:action go_left_option113
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol20) (symbol5) )
+ :effect               (and (symbol13) (symbol8) (not (symbol1)) (not (symbol5)) (decrease (reward) 45.67))
+)
+
+; Action go_left_option-partition-7
+(:action go_left_option114
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol28) (symbol5) )
+ :effect (probabilistic 0.823 (not (notfailed))
+          0.177               (and (symbol13) (symbol8) (not (symbol1)) (not (symbol5)) (decrease (reward) 45.67))
+             )
+)
+
+; Action go_left_option-partition-7
+(:action go_left_option115
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol20) (symbol5) )
+ :effect (probabilistic 0.0829 (not (notfailed))
+          0.9171               (and (symbol13) (symbol8) (not (symbol5)) (not (symbol11)) (decrease (reward) 45.67))
+             )
+)
+
+; Action go_left_option-partition-7
+(:action go_left_option116
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol20) (symbol5) )
+ :effect (probabilistic 0.2884 (not (notfailed))
+          0.7116               (and (symbol13) (symbol8) (not (symbol5)) (not (symbol15)) (decrease (reward) 45.67))
+             )
+)
+
+; Action go_right_option-partition-8
+(:action go_right_option117
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol2) )
+ :effect               (and (symbol1) (not (symbol8)) (decrease (reward) 48.88))
+)
+
+; Action go_right_option-partition-8
+(:action go_right_option118
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol18) )
+ :effect               (and (symbol1) (not (symbol8)) (decrease (reward) 48.86))
+)
+
+; Action go_right_option-partition-8
+(:action go_right_option119
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol20) )
+ :effect               (and (symbol1) (not (symbol8)) (decrease (reward) 48.91))
+)
+
+; Action go_right_option-partition-8
+(:action go_right_option120
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol28) )
+ :effect (probabilistic 0.5028 (not (notfailed))
+          0.4972               (and (symbol1) (not (symbol8)) (decrease (reward) 48.91))
+             )
+)
+
+; Action go_right_option-partition-8
+(:action go_right_option121
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol18) )
+ :effect (probabilistic 0.8402 (not (notfailed))
+          0.1598               (and (symbol1) (not (symbol11)) (decrease (reward) 48.88))
+             )
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option122
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol17) (symbol7) )
+ :effect               (and (symbol14) (not (symbol9)) (decrease (reward) 45.96))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option123
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol17) (symbol16) )
+ :effect               (and (symbol14) (not (symbol9)) (decrease (reward) 45.27))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option124
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol30) (symbol7) )
+ :effect               (and (symbol14) (not (symbol9)) (decrease (reward) 45.75))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option125
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol30) (symbol16) )
+ :effect (probabilistic 0.4114 (not (notfailed))
+          0.5886               (and (symbol14) (not (symbol9)) (decrease (reward) 45.04))
+             )
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option126
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol17) (symbol7) )
+ :effect               (and (symbol14) (not (symbol10)) (decrease (reward) 44.34))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option127
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol17) (symbol16) )
+ :effect               (and (symbol14) (not (symbol10)) (decrease (reward) 44.46))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option128
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol20) (symbol7) )
+ :effect               (and (symbol14) (not (symbol10)) (decrease (reward) 43.84))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option129
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol20) (symbol16) )
+ :effect               (and (symbol14) (not (symbol10)) (decrease (reward) 44.26))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option130
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol28) (symbol7) )
+ :effect               (and (symbol14) (not (symbol10)) (decrease (reward) 44.09))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option131
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol28) (symbol16) )
+ :effect               (and (symbol14) (not (symbol10)) (decrease (reward) 44.32))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option132
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol30) (symbol16) )
+ :effect               (and (symbol14) (not (symbol10)) (decrease (reward) 44.70))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option133
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol17) (symbol7) )
+ :effect               (and (symbol14) (not (symbol12)) (decrease (reward) 45.34))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option134
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol17) (symbol16) )
+ :effect               (and (symbol14) (not (symbol12)) (decrease (reward) 45.00))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option135
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol28) (symbol7) )
+ :effect               (and (symbol14) (not (symbol12)) (decrease (reward) 45.12))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option136
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol28) (symbol16) )
+ :effect               (and (symbol14) (not (symbol12)) (decrease (reward) 44.88))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option137
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol30) (symbol7) )
+ :effect               (and (symbol14) (not (symbol12)) (decrease (reward) 45.84))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option138
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol30) (symbol16) )
+ :effect               (and (symbol14) (not (symbol12)) (decrease (reward) 45.25))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option139
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol17) (symbol7) )
+ :effect               (and (symbol14) (not (symbol27)) (decrease (reward) 44.71))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option140
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol17) (symbol16) )
+ :effect               (and (symbol14) (not (symbol27)) (decrease (reward) 44.78))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option141
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol20) (symbol7) )
+ :effect               (and (symbol14) (not (symbol27)) (decrease (reward) 44.28))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option142
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol20) (symbol16) )
+ :effect               (and (symbol14) (not (symbol27)) (decrease (reward) 44.47))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option143
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol28) (symbol7) )
+ :effect               (and (symbol14) (not (symbol27)) (decrease (reward) 44.43))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option144
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol28) (symbol16) )
+ :effect               (and (symbol14) (not (symbol27)) (decrease (reward) 44.48))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option145
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol30) (symbol7) )
+ :effect (probabilistic 0.655 (not (notfailed))
+          0.345               (and (symbol14) (not (symbol27)) (decrease (reward) 44.71))
+             )
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option146
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol30) (symbol16) )
+ :effect               (and (symbol14) (not (symbol27)) (decrease (reward) 45.10))
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option147
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol17) (symbol7) )
+ :effect (probabilistic 0.3207 (not (notfailed))
+          0.6793               (and (symbol14) (not (symbol29)) (decrease (reward) 46.20))
+             )
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option148
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol17) (symbol16) )
+ :effect (probabilistic 0.5872 (not (notfailed))
+          0.4128               (and (symbol14) (not (symbol29)) (decrease (reward) 46.06))
+             )
+)
+
+; Action go_right_option-partition-9
+(:action go_right_option149
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol30) (symbol7) )
+ :effect (probabilistic 0.1853 (not (notfailed))
+          0.8147               (and (symbol14) (not (symbol29)) (decrease (reward) 46.49))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option150
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol18) (symbol22) )
+ :effect               (and (symbol10) (not (symbol1)) (decrease (reward) 73.33))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option151
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol20) (symbol22) )
+ :effect               (and (symbol10) (not (symbol1)) (decrease (reward) 71.84))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option152
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol28) (symbol22) )
+ :effect               (and (symbol10) (not (symbol1)) (decrease (reward) 71.23))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option153
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol20) (symbol22) )
+ :effect (probabilistic 0.8632 (not (notfailed))
+          0.1368               (and (symbol10) (not (symbol8)) (decrease (reward) 71.48))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option154
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol18) (symbol3) )
+ :effect               (and (symbol10) (not (symbol9)) (decrease (reward) 58.38))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option155
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol18) (symbol22) )
+ :effect (probabilistic 0.4708 (not (notfailed))
+          0.5292               (and (symbol10) (not (symbol9)) (decrease (reward) 71.28))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option156
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol20) (symbol3) )
+ :effect               (and (symbol10) (not (symbol9)) (decrease (reward) 57.24))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option157
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol20) (symbol22) )
+ :effect (probabilistic 0.0615 (not (notfailed))
+          0.9385               (and (symbol10) (not (symbol9)) (decrease (reward) 70.85))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option158
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol28) (symbol3) )
+ :effect (probabilistic 0.8938 (not (notfailed))
+          0.1062               (and (symbol10) (not (symbol9)) (decrease (reward) 57.51))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option159
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol28) (symbol22) )
+ :effect (probabilistic 0.8625 (not (notfailed))
+          0.1375               (and (symbol10) (not (symbol9)) (decrease (reward) 70.03))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option160
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol18) (symbol22) )
+ :effect               (and (symbol10) (not (symbol11)) (decrease (reward) 71.93))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option161
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol20) (symbol22) )
+ :effect               (and (symbol10) (not (symbol11)) (decrease (reward) 72.24))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option162
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol28) (symbol22) )
+ :effect               (and (symbol10) (not (symbol11)) (decrease (reward) 71.85))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option163
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol18) (symbol3) )
+ :effect (probabilistic 0.0695 (not (notfailed))
+          0.9305               (and (symbol10) (not (symbol12)) (decrease (reward) 58.02))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option164
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol20) (symbol3) )
+ :effect               (and (symbol10) (not (symbol12)) (decrease (reward) 58.01))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option165
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol28) (symbol3) )
+ :effect (probabilistic 0.4531 (not (notfailed))
+          0.5469               (and (symbol10) (not (symbol12)) (decrease (reward) 56.81))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option166
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol18) (symbol22) )
+ :effect               (and (symbol10) (not (symbol15)) (decrease (reward) 72.41))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option167
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol20) (symbol22) )
+ :effect               (and (symbol10) (not (symbol15)) (decrease (reward) 71.56))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option168
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol28) (symbol22) )
+ :effect               (and (symbol10) (not (symbol15)) (decrease (reward) 70.62))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option169
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol20) (symbol3) )
+ :effect (probabilistic 0.285 (not (notfailed))
+          0.715               (and (symbol10) (not (symbol27)) (decrease (reward) 56.78))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option170
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol18) (symbol3) )
+ :effect (probabilistic 0.374 (not (notfailed))
+          0.626               (and (symbol10) (not (symbol29)) (decrease (reward) 58.31))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option171
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol18) (symbol22) )
+ :effect               (and (symbol10) (not (symbol29)) (decrease (reward) 72.97))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option172
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol20) (symbol3) )
+ :effect (probabilistic 0.7352 (not (notfailed))
+          0.2648               (and (symbol10) (not (symbol29)) (decrease (reward) 56.56))
+             )
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option173
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol20) (symbol22) )
+ :effect               (and (symbol10) (not (symbol29)) (decrease (reward) 71.53))
+)
+
+; Action go_right_option-partition-10
+(:action go_right_option174
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol28) (symbol22) )
+ :effect (probabilistic 0.1533 (not (notfailed))
+          0.8467               (and (symbol10) (not (symbol29)) (decrease (reward) 70.57))
+             )
+)
+
+; Action go_right_option-partition-11
+(:action go_right_option175
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol17) )
+ :effect               (and (symbol11) (not (symbol8)) (decrease (reward) 32.92))
+)
+
+; Action go_right_option-partition-11
+(:action go_right_option176
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol19) )
+ :effect               (and (symbol11) (not (symbol8)) (decrease (reward) 33.03))
+)
+
+; Action go_right_option-partition-11
+(:action go_right_option177
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol25) )
+ :effect               (and (symbol11) (not (symbol8)) (decrease (reward) 33.01))
+)
+
+; Action go_right_option-partition-11
+(:action go_right_option178
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol26) )
+ :effect               (and (symbol11) (not (symbol8)) (decrease (reward) 32.97))
+)
+
+; Action go_right_option-partition-11
+(:action go_right_option179
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol28) )
+ :effect (probabilistic 0.5569 (not (notfailed))
+          0.4431               (and (symbol11) (not (symbol8)) (decrease (reward) 32.92))
+             )
+)
+
+; Action go_right_option-partition-11
+(:action go_right_option180
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol30) )
+ :effect               (and (symbol11) (not (symbol8)) (decrease (reward) 32.97))
+)
+
+; Action go_right_option-partition-12
+(:action go_right_option181
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol17) )
+ :effect               (and (symbol15) (not (symbol1)) (decrease (reward) 26.42))
+)
+
+; Action go_right_option-partition-12
+(:action go_right_option182
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol28) )
+ :effect (probabilistic 0.4589 (not (notfailed))
+          0.5411               (and (symbol15) (not (symbol1)) (decrease (reward) 26.42))
+             )
+)
+
+; Action go_right_option-partition-12
+(:action go_right_option183
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol30) )
+ :effect (probabilistic 0.1615 (not (notfailed))
+          0.8385               (and (symbol15) (not (symbol1)) (decrease (reward) 26.42))
+             )
+)
+
+; Action go_right_option-partition-12
+(:action go_right_option184
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol17) )
+ :effect               (and (symbol15) (not (symbol11)) (decrease (reward) 26.42))
+)
+
+; Action go_right_option-partition-12
+(:action go_right_option185
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) )
+ :effect (probabilistic 0.8039 (not (notfailed))
+          0.1961               (and (symbol15) (not (symbol11)) (decrease (reward) 26.42))
+             )
+)
+
+; Action go_right_option-partition-12
+(:action go_right_option186
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol28) )
+ :effect               (and (symbol15) (not (symbol11)) (decrease (reward) 26.42))
+)
+
+; Action go_right_option-partition-12
+(:action go_right_option187
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) )
+ :effect               (and (symbol15) (not (symbol11)) (decrease (reward) 26.42))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option188
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol19) )
+ :effect               (and (symbol9) (not (symbol1)) (decrease (reward) 64.09))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option189
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol25) )
+ :effect               (and (symbol9) (not (symbol1)) (decrease (reward) 64.09))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option190
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol26) )
+ :effect               (and (symbol9) (not (symbol1)) (decrease (reward) 64.09))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option191
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol30) )
+ :effect (probabilistic 0.1408 (not (notfailed))
+          0.8592               (and (symbol9) (not (symbol1)) (decrease (reward) 64.09))
+             )
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option192
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol19) )
+ :effect               (and (symbol9) (not (symbol11)) (decrease (reward) 64.09))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option193
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol25) )
+ :effect               (and (symbol9) (not (symbol11)) (decrease (reward) 64.09))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option194
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) )
+ :effect               (and (symbol9) (not (symbol11)) (decrease (reward) 64.09))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option195
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) )
+ :effect (probabilistic 0.448 (not (notfailed))
+          0.552               (and (symbol9) (not (symbol11)) (decrease (reward) 64.09))
+             )
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option196
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol19) )
+ :effect               (and (symbol9) (not (symbol15)) (decrease (reward) 64.09))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option197
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) )
+ :effect               (and (symbol9) (not (symbol15)) (decrease (reward) 64.08))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option198
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol26) )
+ :effect               (and (symbol9) (not (symbol15)) (decrease (reward) 64.08))
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option199
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol30) )
+ :effect (probabilistic 0.5839 (not (notfailed))
+          0.4161               (and (symbol9) (not (symbol15)) (decrease (reward) 64.08))
+             )
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option200
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol19) )
+ :effect (probabilistic 0.4496 (not (notfailed))
+          0.5504               (and (symbol9) (not (symbol29)) (decrease (reward) 64.09))
+             )
+)
+
+; Action go_right_option-partition-13
+(:action go_right_option201
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol25) )
+ :effect (probabilistic 0.6465 (not (notfailed))
+          0.3535               (and (symbol9) (not (symbol29)) (decrease (reward) 64.08))
+             )
+)
+
+; Action go_right_option-partition-14
+(:action go_right_option202
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol17) (symbol24) (symbol7) )
+ :effect (probabilistic 0.7576 (not (notfailed))
+          0.2424               (and (symbol16) (symbol14) (not (symbol7)) (not (symbol10)) (decrease (reward) 32.92))
+             )
+)
+
+; Action go_right_option-partition-14
+(:action go_right_option203
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol26) (symbol24) (symbol7) )
+ :effect (probabilistic 0.7112 (not (notfailed))
+          0.2888               (and (symbol16) (symbol14) (not (symbol7)) (not (symbol10)) (decrease (reward) 32.93))
+             )
+)
+
+; Action go_right_option-partition-14
+(:action go_right_option204
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol30) (symbol5) (symbol7) )
+ :effect (probabilistic 0.6693 (not (notfailed))
+          0.3307               (and (symbol16) (symbol14) (not (symbol7)) (not (symbol10)) (decrease (reward) 32.93))
+             )
+)
+
+; Action go_right_option-partition-14
+(:action go_right_option205
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol30) (symbol24) (symbol7) )
+ :effect               (and (symbol16) (symbol14) (not (symbol7)) (not (symbol10)) (decrease (reward) 32.93))
+)
+
+; Action go_right_option-partition-14
+(:action go_right_option206
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol26) (symbol24) (symbol7) )
+ :effect (probabilistic 0.3345 (not (notfailed))
+          0.6655               (and (symbol16) (symbol14) (not (symbol7)) (decrease (reward) 32.92))
+             )
+)
+
+; Action go_right_option-partition-14
+(:action go_right_option207
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol30) (symbol24) (symbol7) )
+ :effect (probabilistic 0.1154 (not (notfailed))
+          0.8846               (and (symbol16) (symbol14) (not (symbol7)) (decrease (reward) 32.94))
+             )
+)
+
+; Action go_right_option-partition-14
+(:action go_right_option208
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol30) (symbol24) (symbol7) )
+ :effect (probabilistic 0.8223 (not (notfailed))
+          0.1777               (and (symbol16) (symbol14) (not (symbol7)) (not (symbol27)) (decrease (reward) 32.93))
+             )
+)
+
+; Action up_ladder_option-partition-15
+(:action up_ladder_option209
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol18) )
+ :effect               (and (symbol2) (not (symbol18)) (decrease (reward) 17.41))
+)
+
+; Action up_ladder_option-partition-15
+(:action up_ladder_option210
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol18) )
+ :effect               (and (symbol2) (not (symbol18)) (decrease (reward) 17.41))
+)
+
+; Action up_ladder_option-partition-15
+(:action up_ladder_option211
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol18) )
+ :effect               (and (symbol2) (not (symbol18)) (decrease (reward) 17.40))
+)
+
+; Action up_ladder_option-partition-15
+(:action up_ladder_option212
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol18) )
+ :effect (probabilistic 0.4532 (not (notfailed))
+          0.5468               (and (symbol2) (not (symbol18)) (decrease (reward) 17.42))
+             )
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option213
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol19) )
+ :effect               (and (symbol17) (not (symbol19)) (decrease (reward) 80.22))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option214
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol25) )
+ :effect               (and (symbol17) (not (symbol25)) (decrease (reward) 80.21))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option215
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol26) )
+ :effect               (and (symbol17) (not (symbol26)) (decrease (reward) 80.23))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option216
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol30) )
+ :effect (probabilistic 0.1409 (not (notfailed))
+          0.8591               (and (symbol17) (not (symbol30)) (decrease (reward) 80.20))
+             )
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option217
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol19) )
+ :effect               (and (symbol17) (not (symbol19)) (decrease (reward) 80.23))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option218
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol25) )
+ :effect               (and (symbol17) (not (symbol25)) (decrease (reward) 80.22))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option219
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) )
+ :effect               (and (symbol17) (not (symbol26)) (decrease (reward) 80.22))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option220
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) )
+ :effect (probabilistic 0.4468 (not (notfailed))
+          0.5532               (and (symbol17) (not (symbol30)) (decrease (reward) 80.21))
+             )
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option221
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol19) )
+ :effect               (and (symbol17) (not (symbol19)) (decrease (reward) 80.23))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option222
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) )
+ :effect               (and (symbol17) (not (symbol25)) (decrease (reward) 80.20))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option223
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol26) )
+ :effect               (and (symbol17) (not (symbol26)) (decrease (reward) 80.21))
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option224
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol30) )
+ :effect (probabilistic 0.5855 (not (notfailed))
+          0.4145               (and (symbol17) (not (symbol30)) (decrease (reward) 80.20))
+             )
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option225
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol19) )
+ :effect (probabilistic 0.472 (not (notfailed))
+          0.528               (and (symbol17) (not (symbol19)) (decrease (reward) 80.22))
+             )
+)
+
+; Action up_ladder_option-partition-16
+(:action up_ladder_option226
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol25) )
+ :effect (probabilistic 0.6482 (not (notfailed))
+          0.3518               (and (symbol17) (not (symbol25)) (decrease (reward) 80.21))
+             )
+)
+
+; Action up_ladder_option-partition-17
+(:action up_ladder_option227
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol17) )
+ :effect (probabilistic 0.3566 (not (notfailed))
+          0.6434               (and (symbol18) (not (symbol17)) (decrease (reward) 48.76))
+             )
+)
+
+; Action up_ladder_option-partition-17
+(:action up_ladder_option228
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol20) )
+ :effect               (and (symbol18) (not (symbol20)) (decrease (reward) 48.76))
+)
+
+; Action up_ladder_option-partition-17
+(:action up_ladder_option229
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol28) )
+ :effect               (and (symbol18) (not (symbol28)) (decrease (reward) 48.76))
+)
+
+; Action up_ladder_option-partition-17
+(:action up_ladder_option230
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol20) )
+ :effect               (and (symbol18) (not (symbol20)) (decrease (reward) 48.76))
+)
+
+; Action up_ladder_option-partition-17
+(:action up_ladder_option231
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol28) )
+ :effect (probabilistic 0.1093 (not (notfailed))
+          0.8907               (and (symbol18) (not (symbol28)) (decrease (reward) 48.76))
+             )
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option232
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol25) )
+ :effect               (and (symbol19) (not (symbol25)) (decrease (reward) 51.74))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option233
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol26) )
+ :effect               (and (symbol19) (not (symbol26)) (decrease (reward) 51.91))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option234
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol30) )
+ :effect               (and (symbol19) (not (symbol30)) (decrease (reward) 51.99))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option235
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol25) )
+ :effect               (and (symbol19) (not (symbol25)) (decrease (reward) 51.57))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option236
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol26) )
+ :effect               (and (symbol19) (not (symbol26)) (decrease (reward) 51.85))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option237
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol30) )
+ :effect               (and (symbol19) (not (symbol30)) (decrease (reward) 52.00))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option238
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol25) )
+ :effect               (and (symbol19) (not (symbol25)) (decrease (reward) 51.67))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option239
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol26) )
+ :effect               (and (symbol19) (not (symbol26)) (decrease (reward) 51.84))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option240
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol30) )
+ :effect (probabilistic 0.5905 (not (notfailed))
+          0.4095               (and (symbol19) (not (symbol30)) (decrease (reward) 51.99))
+             )
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option241
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol17) )
+ :effect               (and (symbol19) (not (symbol17)) (decrease (reward) 52.23))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option242
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol25) )
+ :effect               (and (symbol19) (not (symbol25)) (decrease (reward) 51.67))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option243
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol26) )
+ :effect               (and (symbol19) (not (symbol26)) (decrease (reward) 51.69))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option244
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol30) )
+ :effect               (and (symbol19) (not (symbol30)) (decrease (reward) 51.97))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option245
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) )
+ :effect               (and (symbol19) (not (symbol25)) (decrease (reward) 51.82))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option246
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol26) )
+ :effect               (and (symbol19) (not (symbol26)) (decrease (reward) 51.87))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option247
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol30) )
+ :effect               (and (symbol19) (not (symbol30)) (decrease (reward) 51.93))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option248
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol25) )
+ :effect               (and (symbol19) (not (symbol25)) (decrease (reward) 51.70))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option249
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol26) )
+ :effect               (and (symbol19) (not (symbol26)) (decrease (reward) 51.84))
+)
+
+; Action down_ladder_option-partition-18
+(:action down_ladder_option250
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol30) )
+ :effect               (and (symbol19) (not (symbol30)) (decrease (reward) 52.03))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option251
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol2) )
+ :effect (probabilistic 0.0755 (not (notfailed))
+          0.9245               (and (symbol20) (not (symbol2)) (decrease (reward) 48.83))
+             )
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option252
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol18) )
+ :effect (probabilistic 0.4804 (not (notfailed))
+          0.5196               (and (symbol20) (not (symbol18)) (decrease (reward) 48.82))
+             )
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option253
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol2) )
+ :effect               (and (symbol20) (not (symbol2)) (decrease (reward) 48.86))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option254
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol18) )
+ :effect               (and (symbol20) (not (symbol18)) (decrease (reward) 48.84))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option255
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol2) )
+ :effect               (and (symbol20) (not (symbol2)) (decrease (reward) 48.83))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option256
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol18) )
+ :effect               (and (symbol20) (not (symbol18)) (decrease (reward) 48.83))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option257
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol2) )
+ :effect               (and (symbol20) (not (symbol2)) (decrease (reward) 48.84))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option258
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol18) )
+ :effect               (and (symbol20) (not (symbol18)) (decrease (reward) 48.86))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option259
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol2) )
+ :effect               (and (symbol20) (not (symbol2)) (decrease (reward) 48.84))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option260
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol18) )
+ :effect               (and (symbol20) (not (symbol18)) (decrease (reward) 48.85))
+)
+
+; Action down_ladder_option-partition-19
+(:action down_ladder_option261
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol2) )
+ :effect (probabilistic 0.7453 (not (notfailed))
+          0.2547               (and (symbol20) (not (symbol2)) (decrease (reward) 48.82))
+             )
+)
+
+; Action down_ladder_option-partition-20
+(:action down_ladder_option262
+ :parameters () 
+ :precondition (and (notfailed) (symbol2) )
+ :effect               (and (symbol18) (not (symbol2)) (decrease (reward) 17.61))
+)
+
+; Action interact_option-partition-21
+(:action interact_option263
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol17) (symbol22) )
+ :effect (probabilistic
+              0.7897 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2103 (and (symbol21) (not (symbol4)) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-21
+(:action interact_option264
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol18) (symbol22) )
+ :effect (probabilistic 0.3365 (not (notfailed))
+          0.6635 (probabilistic
+              0.7897 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2103 (and (symbol21) (not (symbol4)) (decrease (reward) 1.00))
+              )
+             )
+)
+
+; Action interact_option-partition-21
+(:action interact_option265
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol20) (symbol22) )
+ :effect (probabilistic
+              0.7897 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2103 (and (symbol21) (not (symbol4)) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-21
+(:action interact_option266
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol28) (symbol22) )
+ :effect (probabilistic
+              0.7897 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2103 (and (symbol21) (not (symbol4)) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-21
+(:action interact_option267
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol30) (symbol22) )
+ :effect (probabilistic 0.7712 (not (notfailed))
+          0.2288 (probabilistic
+              0.7897 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2103 (and (symbol21) (not (symbol4)) (decrease (reward) 1.00))
+              )
+             )
+)
+
+; Action interact_option-partition-22
+(:action interact_option268
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol2) (symbol3) )
+ :effect (probabilistic 0.4397 (not (notfailed))
+          0.5603 (probabilistic
+              0.7955 (and (symbol21) (symbol22) (not (symbol3)) (not (symbol4)) (decrease (reward) 1.00))
+              0.2045 (and (symbol4) (not (symbol21)) (decrease (reward) 1.00))
+              )
+             )
+)
+
+; Action interact_option-partition-22
+(:action interact_option269
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol18) (symbol3) )
+ :effect (probabilistic
+              0.7955 (and (symbol21) (symbol22) (not (symbol3)) (not (symbol4)) (decrease (reward) 1.00))
+              0.2045 (and (symbol4) (not (symbol21)) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-22
+(:action interact_option270
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol20) (symbol3) )
+ :effect (probabilistic
+              0.7955 (and (symbol21) (symbol22) (not (symbol3)) (not (symbol4)) (decrease (reward) 1.00))
+              0.2045 (and (symbol4) (not (symbol21)) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-22
+(:action interact_option271
+ :parameters () 
+ :precondition (and (notfailed) (symbol14) (symbol28) (symbol3) )
+ :effect (probabilistic 0.3823 (not (notfailed))
+          0.6177 (probabilistic
+              0.7955 (and (symbol21) (symbol22) (not (symbol3)) (not (symbol4)) (decrease (reward) 1.00))
+              0.2045 (and (symbol4) (not (symbol21)) (decrease (reward) 1.00))
+              )
+             )
+)
+
+; Action interact_option-partition-23
+(:action interact_option272
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol2) (symbol22) )
+ :effect (probabilistic
+              0.7876 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2124 (and (symbol22) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-23
+(:action interact_option273
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol17) (symbol22) )
+ :effect (probabilistic 0.3792 (not (notfailed))
+          0.6208 (probabilistic
+              0.7876 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2124 (and (symbol22) (decrease (reward) 1.00))
+              )
+             )
+)
+
+; Action interact_option-partition-23
+(:action interact_option274
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol18) (symbol22) )
+ :effect (probabilistic
+              0.7876 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2124 (and (symbol22) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-23
+(:action interact_option275
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol20) (symbol22) )
+ :effect (probabilistic
+              0.7876 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2124 (and (symbol22) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-23
+(:action interact_option276
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol28) (symbol22) )
+ :effect (probabilistic 0.0705 (not (notfailed))
+          0.9295 (probabilistic
+              0.7876 (and (symbol4) (symbol3) (not (symbol21)) (not (symbol22)) (decrease (reward) 1.00))
+              0.2124 (and (symbol22) (decrease (reward) 1.00))
+              )
+             )
+)
+
+; Action interact_option-partition-24
+(:action interact_option277
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol2) (symbol3) )
+ :effect (probabilistic
+              0.8239 (and (symbol21) (symbol22) (not (symbol3)) (not (symbol4)) (decrease (reward) 1.00))
+              0.1761 (and (symbol3) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-24
+(:action interact_option278
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol18) (symbol3) )
+ :effect (probabilistic
+              0.8239 (and (symbol21) (symbol22) (not (symbol3)) (not (symbol4)) (decrease (reward) 1.00))
+              0.1761 (and (symbol3) (decrease (reward) 1.00))
+              )
+)
+
+; Action interact_option-partition-24
+(:action interact_option279
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol2) (symbol3) )
+ :effect (probabilistic 0.8272 (not (notfailed))
+          0.1728 (probabilistic
+              0.8239 (and (symbol21) (symbol22) (not (symbol3)) (not (symbol4)) (decrease (reward) 1.00))
+              0.1761 (and (symbol3) (decrease (reward) 1.00))
+              )
+             )
+)
+
+; Action interact_option-partition-25
+(:action interact_option280
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol19) (symbol13) )
+ :effect               (and (symbol23) (symbol24) (not (symbol6)) (not (symbol13)) (decrease (reward) 1.00))
+)
+
+; Action interact_option-partition-25
+(:action interact_option281
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol25) (symbol13) )
+ :effect (probabilistic 0.0834 (not (notfailed))
+          0.9166               (and (symbol23) (symbol24) (not (symbol6)) (not (symbol13)) (decrease (reward) 1.00))
+             )
+)
+
+; Action interact_option-partition-25
+(:action interact_option282
+ :parameters () 
+ :precondition (and (notfailed) (symbol8) (symbol26) (symbol13) )
+ :effect (probabilistic 0.7814 (not (notfailed))
+          0.2186               (and (symbol23) (symbol24) (not (symbol6)) (not (symbol13)) (decrease (reward) 1.00))
+             )
+)
+
+; Action down_left_option-partition-26
+(:action down_left_option283
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) )
+ :effect               (and (symbol25) (symbol12) (not (symbol2)) (not (symbol17)) (not (symbol18)) (not (symbol19)) (not (symbol20)) (not (symbol26)) (not (symbol27)) (not (symbol28)) (not (symbol30)) (decrease (reward) 24.00))
+)
+
+; Action down_left_option-partition-27
+(:action down_left_option284
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol20) )
+ :effect               (and (symbol17) (symbol15) (not (symbol9)) (not (symbol20)) (decrease (reward) 25.18))
+)
+
+; Action down_left_option-partition-27
+(:action down_left_option285
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol28) )
+ :effect (probabilistic 0.1057 (not (notfailed))
+          0.8943               (and (symbol17) (symbol15) (not (symbol9)) (not (symbol28)) (decrease (reward) 25.18))
+             )
+)
+
+; Action down_left_option-partition-27
+(:action down_left_option286
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol20) )
+ :effect               (and (symbol17) (symbol15) (not (symbol20)) (decrease (reward) 25.18))
+)
+
+; Action down_left_option-partition-27
+(:action down_left_option287
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol28) )
+ :effect (probabilistic 0.1089 (not (notfailed))
+          0.8911               (and (symbol17) (symbol15) (not (symbol28)) (decrease (reward) 25.18))
+             )
+)
+
+; Action down_left_option-partition-27
+(:action down_left_option288
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol20) )
+ :effect               (and (symbol17) (symbol15) (not (symbol20)) (not (symbol29)) (decrease (reward) 25.18))
+)
+
+; Action down_left_option-partition-27
+(:action down_left_option289
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol28) )
+ :effect               (and (symbol17) (symbol15) (not (symbol28)) (not (symbol29)) (decrease (reward) 25.18))
+)
+
+; Action down_left_option-partition-28
+(:action down_left_option290
+ :parameters () 
+ :precondition (and (notfailed) (symbol25) )
+ :effect               (and (symbol19) (symbol9) (not (symbol1)) (not (symbol8)) (not (symbol10)) (not (symbol11)) (not (symbol12)) (not (symbol14)) (not (symbol15)) (not (symbol25)) (not (symbol27)) (not (symbol29)) (decrease (reward) 25.08))
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option291
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol18) )
+ :effect (probabilistic 0.3654 (not (notfailed))
+          0.6346               (and (symbol17) (symbol9) (not (symbol18)) (decrease (reward) 36.30))
+             )
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option292
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol20) )
+ :effect               (and (symbol17) (symbol9) (not (symbol20)) (decrease (reward) 36.34))
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option293
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol28) )
+ :effect (probabilistic 0.8814 (not (notfailed))
+          0.1186               (and (symbol17) (symbol9) (not (symbol28)) (decrease (reward) 36.25))
+             )
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option294
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol18) )
+ :effect (probabilistic 0.4052 (not (notfailed))
+          0.5948               (and (symbol17) (symbol9) (not (symbol12)) (not (symbol18)) (decrease (reward) 36.33))
+             )
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option295
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol20) )
+ :effect               (and (symbol17) (symbol9) (not (symbol12)) (not (symbol20)) (decrease (reward) 36.36))
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option296
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol28) )
+ :effect (probabilistic 0.458 (not (notfailed))
+          0.542               (and (symbol17) (symbol9) (not (symbol12)) (not (symbol28)) (decrease (reward) 36.40))
+             )
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option297
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol20) )
+ :effect (probabilistic 0.3352 (not (notfailed))
+          0.6648               (and (symbol17) (symbol9) (not (symbol20)) (not (symbol27)) (decrease (reward) 36.36))
+             )
+)
+
+; Action down_left_option-partition-29
+(:action down_left_option298
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol20) )
+ :effect (probabilistic 0.8505 (not (notfailed))
+          0.1495               (and (symbol17) (symbol9) (not (symbol20)) (not (symbol29)) (decrease (reward) 36.35))
+             )
+)
+
+; Action down_left_option-partition-30
+(:action down_left_option299
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol17) )
+ :effect               (and (symbol26) (symbol27) (not (symbol10)) (not (symbol17)) (decrease (reward) 23.17))
+)
+
+; Action down_left_option-partition-30
+(:action down_left_option300
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol30) )
+ :effect               (and (symbol26) (symbol27) (not (symbol10)) (not (symbol30)) (decrease (reward) 23.17))
+)
+
+; Action down_left_option-partition-30
+(:action down_left_option301
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol17) )
+ :effect               (and (symbol26) (symbol27) (not (symbol17)) (decrease (reward) 23.17))
+)
+
+; Action down_left_option-partition-30
+(:action down_left_option302
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol30) )
+ :effect (probabilistic 0.0833 (not (notfailed))
+          0.9167               (and (symbol26) (symbol27) (not (symbol30)) (decrease (reward) 23.17))
+             )
+)
+
+; Action down_right_option-partition-31
+(:action down_right_option303
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol20) )
+ :effect               (and (symbol17) (symbol9) (not (symbol20)) (decrease (reward) 25.57))
+)
+
+; Action down_right_option-partition-31
+(:action down_right_option304
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol28) )
+ :effect (probabilistic 0.1023 (not (notfailed))
+          0.8977               (and (symbol17) (symbol9) (not (symbol28)) (decrease (reward) 25.57))
+             )
+)
+
+; Action down_right_option-partition-31
+(:action down_right_option305
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol20) )
+ :effect               (and (symbol17) (symbol9) (not (symbol15)) (not (symbol20)) (decrease (reward) 25.57))
+)
+
+; Action down_right_option-partition-31
+(:action down_right_option306
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol28) )
+ :effect (probabilistic 0.1099 (not (notfailed))
+          0.8901               (and (symbol17) (symbol9) (not (symbol15)) (not (symbol28)) (decrease (reward) 25.57))
+             )
+)
+
+; Action down_right_option-partition-31
+(:action down_right_option307
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol20) )
+ :effect               (and (symbol17) (symbol9) (not (symbol20)) (not (symbol29)) (decrease (reward) 25.57))
+)
+
+; Action down_right_option-partition-31
+(:action down_right_option308
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol28) )
+ :effect               (and (symbol17) (symbol9) (not (symbol28)) (not (symbol29)) (decrease (reward) 25.57))
+)
+
+; Action down_right_option-partition-32
+(:action down_right_option309
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol20) )
+ :effect               (and (symbol17) (symbol15) (not (symbol1)) (not (symbol20)) (decrease (reward) 35.04))
+)
+
+; Action down_right_option-partition-32
+(:action down_right_option310
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol28) )
+ :effect (probabilistic 0.3361 (not (notfailed))
+          0.6639               (and (symbol17) (symbol15) (not (symbol1)) (not (symbol28)) (decrease (reward) 35.04))
+             )
+)
+
+; Action down_right_option-partition-32
+(:action down_right_option311
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol20) )
+ :effect               (and (symbol17) (symbol15) (not (symbol11)) (not (symbol20)) (decrease (reward) 35.04))
+)
+
+; Action down_right_option-partition-32
+(:action down_right_option312
+ :parameters () 
+ :precondition (and (notfailed) (symbol11) (symbol28) )
+ :effect (probabilistic 0.5643 (not (notfailed))
+          0.4357               (and (symbol17) (symbol15) (not (symbol11)) (not (symbol28)) (decrease (reward) 35.04))
+             )
+)
+
+; Action down_right_option-partition-32
+(:action down_right_option313
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol20) )
+ :effect (probabilistic 0.064 (not (notfailed))
+          0.936               (and (symbol17) (symbol15) (not (symbol20)) (decrease (reward) 35.03))
+             )
+)
+
+; Action jump_left_option-partition-33
+(:action jump_left_option314
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol20) )
+ :effect (probabilistic
+              0.4723 (and (symbol17) (symbol1) (not (symbol9)) (not (symbol20)) (decrease (reward) 62.37))
+              0.5277 (and (symbol20) (symbol1) (not (symbol9)) (decrease (reward) 36.35))
+              )
+)
+
+; Action jump_left_option-partition-33
+(:action jump_left_option315
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol28) )
+ :effect (probabilistic 0.1041 (not (notfailed))
+          0.8959 (probabilistic
+              0.4723 (and (symbol17) (symbol1) (not (symbol9)) (not (symbol28)) (decrease (reward) 62.37))
+              0.5277 (and (symbol20) (symbol1) (not (symbol9)) (not (symbol28)) (decrease (reward) 36.35))
+              )
+             )
+)
+
+; Action jump_left_option-partition-33
+(:action jump_left_option316
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol20) )
+ :effect (probabilistic
+              0.4723 (and (symbol17) (symbol1) (not (symbol15)) (not (symbol20)) (decrease (reward) 62.40))
+              0.5277 (and (symbol20) (symbol1) (not (symbol15)) (decrease (reward) 36.31))
+              )
+)
+
+; Action jump_left_option-partition-33
+(:action jump_left_option317
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol28) )
+ :effect (probabilistic 0.1067 (not (notfailed))
+          0.8933 (probabilistic
+              0.4723 (and (symbol17) (symbol1) (not (symbol15)) (not (symbol28)) (decrease (reward) 62.39))
+              0.5277 (and (symbol20) (symbol1) (not (symbol15)) (not (symbol28)) (decrease (reward) 36.33))
+              )
+             )
+)
+
+; Action jump_left_option-partition-33
+(:action jump_left_option318
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol20) )
+ :effect (probabilistic
+              0.4723 (and (symbol17) (symbol1) (not (symbol20)) (not (symbol29)) (decrease (reward) 62.40))
+              0.5277 (and (symbol20) (symbol1) (not (symbol29)) (decrease (reward) 36.35))
+              )
+)
+
+; Action jump_left_option-partition-33
+(:action jump_left_option319
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol28) )
+ :effect (probabilistic
+              0.4723 (and (symbol17) (symbol1) (not (symbol28)) (not (symbol29)) (decrease (reward) 62.42))
+              0.5277 (and (symbol20) (symbol1) (not (symbol28)) (not (symbol29)) (decrease (reward) 36.36))
+              )
+)
+
+; Action jump_left_option-partition-34
+(:action jump_left_option320
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol17) )
+ :effect               (and (symbol28) (symbol29) (not (symbol9)) (not (symbol17)) (decrease (reward) 37.00))
+)
+
+; Action jump_left_option-partition-34
+(:action jump_left_option321
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol30) )
+ :effect (probabilistic 0.1463 (not (notfailed))
+          0.8537               (and (symbol28) (symbol29) (not (symbol9)) (not (symbol30)) (decrease (reward) 37.00))
+             )
+)
+
+; Action jump_left_option-partition-34
+(:action jump_left_option322
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol17) )
+ :effect               (and (symbol28) (symbol29) (not (symbol17)) (decrease (reward) 37.00))
+)
+
+; Action jump_left_option-partition-34
+(:action jump_left_option323
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol30) )
+ :effect (probabilistic 0.1462 (not (notfailed))
+          0.8538               (and (symbol28) (symbol29) (not (symbol30)) (decrease (reward) 37.00))
+             )
+)
+
+; Action jump_right_option-partition-35
+(:action jump_right_option324
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol20) )
+ :effect (probabilistic
+              0.6279 (and (symbol20) (symbol12) (not (symbol9)) (decrease (reward) 36.86))
+              0.3721 (and (symbol17) (symbol12) (not (symbol9)) (not (symbol20)) (decrease (reward) 62.14))
+              )
+)
+
+; Action jump_right_option-partition-35
+(:action jump_right_option325
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol28) )
+ :effect (probabilistic 0.1008 (not (notfailed))
+          0.8992 (probabilistic
+              0.6279 (and (symbol20) (symbol12) (not (symbol9)) (not (symbol28)) (decrease (reward) 36.88))
+              0.3721 (and (symbol17) (symbol12) (not (symbol9)) (not (symbol28)) (decrease (reward) 62.14))
+              )
+             )
+)
+
+; Action jump_right_option-partition-35
+(:action jump_right_option326
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol20) )
+ :effect (probabilistic
+              0.6279 (and (symbol20) (symbol12) (not (symbol15)) (decrease (reward) 36.89))
+              0.3721 (and (symbol17) (symbol12) (not (symbol15)) (not (symbol20)) (decrease (reward) 62.15))
+              )
+)
+
+; Action jump_right_option-partition-35
+(:action jump_right_option327
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol28) )
+ :effect (probabilistic 0.1095 (not (notfailed))
+          0.8905 (probabilistic
+              0.6279 (and (symbol20) (symbol12) (not (symbol15)) (not (symbol28)) (decrease (reward) 36.86))
+              0.3721 (and (symbol17) (symbol12) (not (symbol15)) (not (symbol28)) (decrease (reward) 62.14))
+              )
+             )
+)
+
+; Action jump_right_option-partition-35
+(:action jump_right_option328
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol20) )
+ :effect (probabilistic
+              0.6279 (and (symbol20) (symbol12) (not (symbol29)) (decrease (reward) 36.87))
+              0.3721 (and (symbol17) (symbol12) (not (symbol20)) (not (symbol29)) (decrease (reward) 62.15))
+              )
+)
+
+; Action jump_right_option-partition-35
+(:action jump_right_option329
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol28) )
+ :effect (probabilistic
+              0.6279 (and (symbol20) (symbol12) (not (symbol28)) (not (symbol29)) (decrease (reward) 36.88))
+              0.3721 (and (symbol17) (symbol12) (not (symbol28)) (not (symbol29)) (decrease (reward) 62.15))
+              )
+)
+
+; Action jump_right_option-partition-36
+(:action jump_right_option330
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) )
+ :effect               (and (symbol28) (symbol29) (not (symbol2)) (not (symbol15)) (not (symbol17)) (not (symbol18)) (not (symbol19)) (not (symbol20)) (not (symbol25)) (not (symbol26)) (not (symbol30)) (decrease (reward) 36.50))
+)
+
+; Action jump_right_option-partition-37
+(:action jump_right_option331
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol25) (symbol24) )
+ :effect (probabilistic 0.1749 (not (notfailed))
+          0.8251               (and (symbol30) (symbol10) (not (symbol25)) (decrease (reward) 28.20))
+             )
+)
+
+; Action jump_right_option-partition-37
+(:action jump_right_option332
+ :parameters () 
+ :precondition (and (notfailed) (symbol10) (symbol26) (symbol24) )
+ :effect (probabilistic 0.1255 (not (notfailed))
+          0.8745               (and (symbol30) (symbol10) (not (symbol26)) (decrease (reward) 28.19))
+             )
+)
+
+; Action jump_right_option-partition-37
+(:action jump_right_option333
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol26) (symbol24) )
+ :effect (probabilistic 0.1737 (not (notfailed))
+          0.8263               (and (symbol30) (symbol10) (not (symbol12)) (not (symbol26)) (decrease (reward) 28.20))
+             )
+)
+
+; Action jump_right_option-partition-37
+(:action jump_right_option334
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol30) (symbol24) )
+ :effect (probabilistic 0.3308 (not (notfailed))
+          0.6692               (and (symbol30) (symbol10) (not (symbol12)) (decrease (reward) 28.18))
+             )
+)
+
+; Action jump_right_option-partition-37
+(:action jump_right_option335
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol25) (symbol24) )
+ :effect (probabilistic 0.2112 (not (notfailed))
+          0.7888               (and (symbol30) (symbol10) (not (symbol25)) (not (symbol27)) (decrease (reward) 28.19))
+             )
+)
+
+; Action jump_right_option-partition-37
+(:action jump_right_option336
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol26) (symbol24) )
+ :effect               (and (symbol30) (symbol10) (not (symbol26)) (not (symbol27)) (decrease (reward) 28.18))
+)
+
+; Action jump_right_option-partition-37
+(:action jump_right_option337
+ :parameters () 
+ :precondition (and (notfailed) (symbol27) (symbol30) (symbol24) )
+ :effect (probabilistic 0.3435 (not (notfailed))
+          0.6565               (and (symbol30) (symbol10) (not (symbol27)) (decrease (reward) 28.20))
+             )
+)
+
+; Action jump_right_option-partition-38
+(:action jump_right_option338
+ :parameters () 
+ :precondition (and (notfailed) (symbol1) (symbol19) )
+ :effect (probabilistic 0.7447 (not (notfailed))
+          0.2553               (and (symbol25) (symbol12) (not (symbol1)) (not (symbol19)) (decrease (reward) 36.91))
+             )
+)
+
+; Action jump_right_option-partition-38
+(:action jump_right_option339
+ :parameters () 
+ :precondition (and (notfailed) (symbol9) (symbol19) )
+ :effect               (and (symbol25) (symbol12) (not (symbol9)) (not (symbol19)) (decrease (reward) 36.91))
+)
+
+; Action jump_right_option-partition-38
+(:action jump_right_option340
+ :parameters () 
+ :precondition (and (notfailed) (symbol12) (symbol19) )
+ :effect               (and (symbol25) (symbol12) (not (symbol19)) (decrease (reward) 36.91))
+)
+
+; Action jump_right_option-partition-38
+(:action jump_right_option341
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol19) )
+ :effect               (and (symbol25) (symbol12) (not (symbol15)) (not (symbol19)) (decrease (reward) 36.91))
+)
+
+; Action jump_right_option-partition-38
+(:action jump_right_option342
+ :parameters () 
+ :precondition (and (notfailed) (symbol15) (symbol25) )
+ :effect (probabilistic 0.8709 (not (notfailed))
+          0.1291               (and (symbol25) (symbol12) (not (symbol15)) (decrease (reward) 36.91))
+             )
+)
+
+; Action jump_right_option-partition-38
+(:action jump_right_option343
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol19) )
+ :effect               (and (symbol25) (symbol12) (not (symbol19)) (not (symbol29)) (decrease (reward) 36.91))
+)
+
+; Action jump_right_option-partition-38
+(:action jump_right_option344
+ :parameters () 
+ :precondition (and (notfailed) (symbol29) (symbol25) )
+ :effect (probabilistic 0.6678 (not (notfailed))
+          0.3322               (and (symbol25) (symbol12) (not (symbol29)) (decrease (reward) 36.91))
+             )
+)
+
+; Action jump_right_option-partition-39
+(:action jump_right_option345
+ :parameters () 
+ :precondition (and (notfailed) (symbol25) )
+ :effect               (and (symbol26) (symbol27) (not (symbol1)) (not (symbol8)) (not (symbol9)) (not (symbol10)) (not (symbol11)) (not (symbol12)) (not (symbol14)) (not (symbol15)) (not (symbol25)) (not (symbol29)) (decrease (reward) 37.00))
+)
+
+)
+
+
+(define (problem mine-problem)
+  (:domain TREASURE_GAME)
+
+  (:init (symbol1)
+         (symbol2)  
+  )
+  
+  (:goal
+     
+		 (symbol7)
+  ) 
+)
+
