@@ -53,6 +53,8 @@ class _TreasureGameDrawer:
         self.random_generator.seed(1)
         self.random_images = self.load_random_images()
         self.seed = 12
+        self.frames = list()
+        pygame.font.init()
 
     # make nice by randomising background
 
@@ -160,7 +162,12 @@ class _TreasureGameDrawer:
             self.screen.blit(pygame.transform.flip(self.images[HERO_SPRITE], True, False),
                              (self.md.playerx - xscale / 2, self.md.playery))
         if show_screen:
+            myfont = pygame.font.SysFont('Courier', 28)
+            text = 'Total actions: {0:04}'.format(self.md.total_actions)
+            textsurface = myfont.render(text, False, (255, 255, 255))
+            self.screen.blit(textsurface, (self.md.width - textsurface.get_size()[0] - 10, 10))
             pygame.display.flip()
+            self.frames.append(self.screen.copy())
 
     def draw_background_to_surface(self):
         self.random_generator.seed(self.seed)

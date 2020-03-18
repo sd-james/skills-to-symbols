@@ -337,6 +337,7 @@ def _build_pddl_operator(env: gym.Env, precondition_factors: List[List[int]], op
 
             for i, (outcome_prob, effect, reward_estimator) in enumerate(operator.outcomes()):
                 prob = outcome_prob * remaining_probability
+                prob = round(prob, 3)  # make look nice
                 reward = None if reward_estimator is None else reward_estimator.expected_reward(env, effect, **kwargs)
                 positive_effects = operator_predicates[(operator, i)]
 

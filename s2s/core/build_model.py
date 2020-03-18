@@ -80,7 +80,7 @@ def build_model(env: S2SEnv,
     pddl = PDDLDomain(env, vocabulary, schemata)
 
     # 6. Build PDDL problem file
-    pddl_problem = PDDLProblem('{}-problem'.format(env.name), env.name)
+    pddl_problem = PDDLProblem(kwargs.get('problem_name', 'p1'), env.name)
     pddl_problem.add_start_proposition(Proposition.not_failed())
     for prop in vocabulary.start_predicates:
         pddl_problem.add_start_proposition(prop)
@@ -104,6 +104,8 @@ def build_model(env: S2SEnv,
         save(factors, '{}/factors.pkl'.format(save_dir))
         save(vocabulary, '{}/predicates.pkl'.format(save_dir))
         save(schemata, '{}/schemata.pkl'.format(save_dir))
+        save(pddl, '{}/domain.pkl'.format(save_dir))
+        save(pddl_problem, '{}/problem.pkl'.format(save_dir))
         save(pddl, '{}/domain.pddl'.format(save_dir), binary=False)
         save(pddl_problem, '{}/problem.pddl'.format(save_dir), binary=False)
 

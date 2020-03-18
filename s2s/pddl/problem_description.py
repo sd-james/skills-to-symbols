@@ -1,32 +1,3 @@
-# (define (problem items)
-#    (:domain simple)
-#
-#    (:objects agent - agent
-# 			 door1 - door
-# 			 door2 - door
-# 			 door3 - door
-# 			 door4 - otherDoor
-# 			 inventory - inventory
-# 			 gold - gold
-# 			 redstone -redstone
-# 			 chest - chest
-# 			 pickaxe - pickaxe
-#    )
-#
-#    (:init (symbol_1 inventory)
-#           (symbol_2 gold)
-#           (symbol_3 redstone)
-#           (symbol_4 chest)
-#           (symbol_5 pickaxe)
-#           (symbol_6 door4)
-#           (symbol_7 door1)
-#           (symbol_7 door2)
-#           (symbol_7 door3)
-#           (symbol_10 agent)
-#           (notfailed)
-#     )
-#    (:goal (symbol_46 chest) )
-# )
 from typing import List
 
 from s2s.pddl.proposition import Proposition
@@ -45,7 +16,6 @@ class PDDLProblem:
 
     def add_goal_proposition(self, proposition: Proposition):
         self.goal_propositions.append(proposition)
-
 
     def __str__(self):
 

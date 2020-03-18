@@ -1,7 +1,11 @@
 import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # sorry Pygame :(
+from typing import List
 
+import PIL
 import numpy as np
 import pygame
+from PIL.Image import Image
 from gym.envs.classic_control import rendering
 from gym.spaces import Discrete, Box
 
@@ -31,7 +35,7 @@ class TreasureGame(S2SEnv):
         self.option_list, self.option_names = create_options(self._env)
         self.action_space = Discrete(len(self.option_list))
         s = self._env.get_state()
-        self.observation_space = Box(0, 1, shape=(len(s),))
+        self.observation_space = Box(np.float32(0), np.float32(1), shape=(len(s),))
         self.viewer = None
 
     def reset(self):
@@ -124,6 +128,38 @@ class TreasureGame(S2SEnv):
         if option < 0 or option >= len(self.option_names):
             return super().describe_option(option)
         return self.option_names[option]
+
+    @staticmethod
+    def animate(plan: List[int]) -> List[PIL.Image.Image]:
+
+        pygame.init()
+        dir = os.path.dirname(os.path.realpath(__file__))
+        dir = make_path(dir, '_treasure_game_impl')
+        env = _TreasureGameImpl(make_path(dir, 'domain.txt'), make_path(dir, 'domain-objects.txt'),
+                                make_path(dir, 'domain-interactions.txt'))
+
+        drawer = _TreasureGameDrawer(env, display_screen=True)
+        clock = pygame.time.Clock()
+        pygame.key.set_repeat()
+        options, names = create_options(env, drawer=drawer)
+        done = False
+        while not done:
+            # execute until the plan works (may not work first time because stochasticity)
+            env.reset_game()
+            drawer.frames.clear()
+            for option in plan:
+                clock.tick(30)
+                r = options[option]
+                r.run()
+                drawer.draw_domain()
+                pygame.event.clear()
+            done = env.player_got_goldcoin() and env.get_player_cell()[1] == 0  # got gold and returned
+
+        pygame.display.quit()
+        print("Extracting frames...")
+        return [
+            PIL.Image.frombytes('RGBA', frame.get_size(), pygame.image.tostring(frame, 'RGBA', False)) for frame in
+            drawer.frames]
 
 
 if __name__ == '__main__':
