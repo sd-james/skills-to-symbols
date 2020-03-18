@@ -1,76 +1,23 @@
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # sorry Pygame :(
 from typing import List
 
 import PIL
 import numpy as np
 import pygame
 from PIL.Image import Image
-from gym.envs.classic_control import rendering
-from gym.spaces import Discrete, Box
+from gym_treasure_game.envs._treasure_game_impl._objects import goldcoin, handle, bolt, key
+from gym_treasure_game.envs._treasure_game_impl._treasure_game_impl import _TreasureGameImpl, create_options
+from gym_treasure_game.envs.treasure_game import TreasureGame as BaseTreasureGame
 
 from s2s.env.s2s_env import S2SEnv
-from s2s.env.treasure_game._treasure_game_impl._objects import goldcoin, handle, key, bolt
-from s2s.env.treasure_game._treasure_game_impl._treasure_game_drawer import _TreasureGameDrawer
-from s2s.env.treasure_game._treasure_game_impl._treasure_game_impl import _TreasureGameImpl, create_options
-from s2s.utils import make_path
+from s2s.env.treasure_game._treasure_game_drawer import _TreasureGameDrawer
 
 __author__ = 'Steve James and George Konidaris'
 
 
-class TreasureGame(S2SEnv):
+class TreasureGame(BaseTreasureGame, S2SEnv):
     """
-    The Treasure Game as a Gym environment. For more details of the environment, see
-    G.D. Konidaris, L.P. Kaelbling, and T. Lozano-Perez. From Skills to Symbols: Learning Symbolic Representations for
-    Abstract High-Level Planning. Journal of Artificial Intelligence Research 61, pages 215-289, January 2018
+    An environment that extends the Treasure Game and implements additional functionality for visualisation
     """
-
-    def __init__(self):
-
-        dir = os.path.dirname(os.path.realpath(__file__))
-        dir = make_path(dir, '_treasure_game_impl')
-        self._env = _TreasureGameImpl(make_path(dir, 'domain.txt'), make_path(dir, 'domain-objects.txt'),
-                                      make_path(dir, 'domain-interactions.txt'))
-        self.drawer = None
-        self.option_list, self.option_names = create_options(self._env)
-        self.action_space = Discrete(len(self.option_list))
-        s = self._env.get_state()
-        self.observation_space = Box(np.float32(0), np.float32(1), shape=(len(s),))
-        self.viewer = None
-
-    def reset(self):
-        self._env.reset_game()
-        self.option_list, self.option_names = create_options(self._env, None)
-        return self._env.get_state()
-
-    @property
-    def available_mask(self):
-        return np.array([int(o.can_run()) for o in self.option_list])
-
-    def step(self, action):
-        option = self.option_list[action]
-        r = option.run()
-        state = self._env.get_state()
-        done = self._env.player_got_goldcoin() and self._env.get_player_cell()[1] == 0  # got gold and returned
-        return state, r, done, {}
-
-    def render(self, mode='human'):
-        if self.drawer is None:
-            self.drawer = _TreasureGameDrawer(self._env)
-
-        self.drawer.draw_domain()
-        rgb = pygame.surfarray.array3d(self.drawer.screen).swapaxes(0, 1)  # swap because pygame
-        if mode == 'rgb_array':
-            return rgb
-        elif mode == 'human':
-            # draw it like gym
-            if self.viewer is None:
-                self.viewer = rendering.SimpleImageViewer()
-            self.viewer.imshow(rgb)
-
-    def close(self):
-        if self.viewer is not None:
-            self.viewer.close()
 
     def render_states(self, states: np.ndarray, **kwargs):
         """
@@ -133,11 +80,8 @@ class TreasureGame(S2SEnv):
     def animate(plan: List[int]) -> List[PIL.Image.Image]:
 
         pygame.init()
-        dir = os.path.dirname(os.path.realpath(__file__))
-        dir = make_path(dir, '_treasure_game_impl')
-        env = _TreasureGameImpl(make_path(dir, 'domain.txt'), make_path(dir, 'domain-objects.txt'),
-                                make_path(dir, 'domain-interactions.txt'))
-
+        # need the raw game!
+        env = _TreasureGameImpl.make_default()
         drawer = _TreasureGameDrawer(env, display_screen=True)
         clock = pygame.time.Clock()
         pygame.key.set_repeat()

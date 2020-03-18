@@ -6,7 +6,7 @@ import numpy as np
 from s2s.core.build_model import build_model
 from s2s.env.treasure_game.treasure_game import TreasureGame
 from s2s.planner.mgpt_planner import mGPT
-from s2s.utils import make_path
+from s2s.utils import make_path, load
 
 
 def make_video(path: List[str], directory='.') -> None:
