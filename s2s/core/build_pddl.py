@@ -1,4 +1,6 @@
 import itertools
+import time
+from collections import ChainMap
 from functools import partial
 from typing import List, Tuple, Dict, Iterable
 from warnings import warn
@@ -183,16 +185,17 @@ def build_pddl(env: gym.Env, transition_data: pd.DataFrame, operators: List[Lear
     #     vocabulary.append(new_dist, goal_predicate=True)
     # show("Goal condition generated {} propositions".format(len(vocabulary) - n_start_propositions), verbose)
 
+    n_jobs = kwargs.get('n_jobs', 1)
+    # do it in parallel!
+    show("Running on {} CPUs".format(n_jobs), verbose)
+
     show("Generating propositions...", verbose)
     # get propositions directly from effects
-    operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose)
+    operator_predicates = _generate_vocabulary(vocabulary, operators, factors, verbose=verbose, n_jobs=n_jobs)
     show("Total propositions: {}".format(len(vocabulary)), verbose)
 
     show("Generating full PDDL...", verbose)
 
-    n_jobs = kwargs.get('n_jobs', 1)
-    # do it in parallel!
-    show("Running on {} CPUs".format(n_jobs), verbose)
     splits = np.array_split(operators, n_jobs)
     functions = [
         partial(_build_pddl_operators, env, factors, splits[i], vocabulary, operator_predicates, verbose, **kwargs)
@@ -380,6 +383,28 @@ def _generate_vocabulary(vocabulary: UniquePredicateList, operators: List[Learne
     # Process each option's effect sets.
     # map from (operator, probabilistic effect) -> predicates
     operator_predicates: Dict[Tuple[LearnedOperator, int], List[Proposition]] = {}
+
+    n_jobs = kwargs.get('n_jobs', 1)
+    splits = np.array_split(operators, n_jobs)
+    functions = [partial(_generate_vocabulary_parallel, splits[i], factors, **kwargs) for i in range(n_jobs)]
+    local_operator_predicates = run_parallel(functions)
+    local_operator_predicates = dict(ChainMap(*local_operator_predicates))  # reduce to single dict
+
+    show("Merging propositions from {} processes".format(n_jobs), verbose)
+
+    # take all the results generated in parallel, and collapse into one result.
+    for (operator, effect_idx), local_propositions in local_operator_predicates.items():
+        predicates = [vocabulary.append(x.estimator) for x in local_propositions]
+        operator_predicates[(operator, effect_idx)] = predicates
+    return operator_predicates
+
+
+def _generate_vocabulary_parallel(operators: List[LearnedOperator], factors: List[List[int]],
+                                  verbose=False, **kwargs) -> Dict[Tuple[LearnedOperator, int], List[Proposition]]:
+    dist_comparator = kwargs.get('dist_comparator', _overlapping_dists)
+    vocabulary = UniquePredicateList(dist_comparator)
+    operator_predicates: Dict[Tuple[LearnedOperator, int], List[Proposition]] = {}
+
     for operator in operators:
         for i, (_, effect, _) in enumerate(operator.outcomes()):
             predicates = list()

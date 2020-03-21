@@ -1,6 +1,6 @@
 import copy
 
-from s2s.estimators.kde import KernelDensityEstimator
+from s2s.estimators.estimators import StateDensityEstimator
 
 
 class Proposition:
@@ -8,12 +8,13 @@ class Proposition:
     A non-typed, non-lifted predicate (i.e. a proposition)
     """
 
-    def __init__(self, name: str, kde: KernelDensityEstimator):
+    def __init__(self, name: str, kde: StateDensityEstimator):
         self._name = name
         self._kde = kde
         self.sign = 1  # whether true or the negation of the predicate
 
-    def estimator(self) -> KernelDensityEstimator:
+    @property
+    def estimator(self) -> StateDensityEstimator:
         return self._kde
 
     @property

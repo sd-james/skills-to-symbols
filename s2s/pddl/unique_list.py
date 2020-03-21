@@ -35,16 +35,16 @@ class UniquePredicateList:
         existing item in the list
         """
         for x in self._list:
-            if self._comparator(item, x.estimator()):
-                self._add_special(x, start_predicate, goal_predicate)
+            if self._comparator(item, x.estimator):
+                self._add(x, start_predicate, goal_predicate)
                 return x
         idx = len(self._list)
         predicate = Proposition('symbol_{}'.format(idx), item)
         self._list.append(predicate)
-        self._add_special(predicate, start_predicate, goal_predicate)
+        self._add(predicate, start_predicate, goal_predicate)
         return predicate
 
-    def _add_special(self, x: Proposition, start_predicate, goal_predicate):
+    def _add(self, x: Proposition, start_predicate=False, goal_predicate=False):
         if start_predicate:
             self._start_predicates.append(x)
         if goal_predicate:
