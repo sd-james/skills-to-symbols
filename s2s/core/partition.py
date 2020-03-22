@@ -1,5 +1,6 @@
-from collections import defaultdict
-from typing import List, Dict, Tuple
+from collections import defaultdict, ChainMap
+from functools import partial
+from typing import List, Dict, Tuple, Iterable
 
 import gym
 import numpy as np
@@ -9,7 +10,7 @@ from sklearn.cluster import DBSCAN
 
 from s2s.core.partitioned_option import PartitionedOption
 from s2s.union_find import UnionFind
-from s2s.utils import show, pd2np, select_rows
+from s2s.utils import show, pd2np, select_rows, run_parallel
 
 __author__ = 'Steve James and George Konidaris'
 
@@ -26,17 +27,30 @@ def partition_options(env: gym.Env, transition_data: pd.DataFrame,
     if not isinstance(env.action_space, Discrete):
         raise ValueError("Action space must be discrete")
 
+    n_jobs = kwargs.get('n_jobs', 1)
+    show("Running on {} CPUs".format(n_jobs), verbose)
+    action_splits = np.array_split(range(env.action_space.n), n_jobs)
+
+    functions = [partial(_partition_options, action_splits[i], transition_data, verbose=verbose, **kwargs)
+                 for i in range(n_jobs)]
+    # run in parallel
+    partitioned_options = run_parallel(functions)
+    partitioned_options = dict(ChainMap(*partitioned_options))
+    count = sum(len(partitions) for _, partitions in partitioned_options.items())
+
+    show("{} total partitions discovered".format(count), verbose)
+    return partitioned_options
+
+
+def _partition_options(options: Iterable[int], transition_data: pd.DataFrame,
+                       verbose=False, **kwargs) -> Dict[int, List[PartitionedOption]]:
     partitioned_options = dict()
-    count = 0
-    for option in range(env.action_space.n):
+    for option in options:
         show('Partitioning option {}'.format(option), verbose)
         # partition based on data from the current option
         partitioned_options[option] = _partition_option(option,
                                                         transition_data.loc[transition_data['option'] == option],
                                                         verbose=verbose, **kwargs)
-        count += len(partitioned_options[option])
-
-    show("{} total partitions discovered".format(count), verbose)
     return partitioned_options
 
 
