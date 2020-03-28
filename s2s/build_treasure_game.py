@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     # Now feed it to a planner
     planner = mGPT(mdpsim_path='./planner/mdpsim-1.23/mdpsim',
-                   mgpt_path='./planner/mini-gpt/planner',
+                   mgpt_path='./planner/mgpt/planner',
                    wsl=True)
     valid, output = planner.find_plan(domain, problem)
 
