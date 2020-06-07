@@ -23,6 +23,14 @@ class S2SWrapper(gym.Wrapper):
 
         return state, reward, done, info
 
+    def sample_action(self, valid_only=True):
+        """
+        Randomly pick an action
+        :param valid_only: whether only valid actions should be picked
+        :return: an action
+        """
+        return self.unwrapped.sample_action(valid_only=valid_only)
+
 
 class S2SEnv(gym.Env, ABC):
     """

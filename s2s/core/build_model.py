@@ -60,6 +60,7 @@ def build_model(env: S2SEnv,
     partitions = partition_options(env,
                                    transition_data,
                                    verbose=verbose,
+                                   n_jobs=n_jobs,
                                    **kwargs)
 
     # 3. Estimate preconditions

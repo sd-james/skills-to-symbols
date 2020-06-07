@@ -5,13 +5,15 @@ import numpy as np
 
 from s2s.core.build_model import build_model
 from s2s.env.treasure_game.treasure_game import TreasureGame
+from s2s.pddl.domain_description import PDDLDomain
 from s2s.planner.mgpt_planner import mGPT
 from s2s.utils import make_path, load
 
 
-def make_video(path: List[str], directory='.') -> None:
+def make_video(domain: PDDLDomain, path: List[str], directory='.') -> None:
     """
     Create a video of the agent solving the task
+    :param domain: the PDDL domain
     :param path: the list of PDDL operators to execute
     :param directory: the directory where the video should be written to
     """
@@ -40,7 +42,7 @@ def make_video(path: List[str], directory='.') -> None:
 
 if __name__ == '__main__':
     env = TreasureGame()
-    save_dir = 'output'
+    save_dir = 'treasure_game_data'
 
     # Build the PDDL model
     domain, problem = build_model(env,
@@ -68,5 +70,5 @@ if __name__ == '__main__':
         # get the plan out
         print(output.raw_output)
         print(output.path)
-        make_video(output.path, directory=save_dir)
+        make_video(domain, output.path, directory=save_dir)
 
